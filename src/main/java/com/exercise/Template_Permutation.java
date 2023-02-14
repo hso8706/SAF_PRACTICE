@@ -2,7 +2,7 @@ package com.exercise;
 
 import java.util.Scanner;
 
-public class Permutation {
+public class Template_Permutation {
     // 초기화
     // 1. 전체 배열 만들기, 길이 N(입력)
         // 내용 채우기
@@ -19,7 +19,7 @@ public class Permutation {
             // 맞다면, 넘어감
         // 재귀 호출, checkPoint 에 1을 추가해서 호출
         // 재귀 종료되면 마지막에 사용된 isSelected 를 false 로 다시 상태를 변경하고, 반복문을 통해 다음 인덱스의 요소를 조회하도록 구현
-        
+
     static int[] totalArr, selectedArr;
     static int N, R, totalCount;
     static boolean[] isSelected;
@@ -44,9 +44,9 @@ public class Permutation {
             totalCount++;
             return;
         }
-
-        for (int i = 0; i < N; i++) {
-            if(!isSelected[i]){
+        //isSelected 는 기본값인 false 로 초기화되어 있는 상태
+        for (int i = 0; i < N; i++) { // isSelected 순회를 위한 반복문
+            if(!isSelected[i]){ //false 를 만나면 조건 성립
                 selectedArr[checkPoint] = totalArr[i];
                 isSelected[i] = true;
                 perm(checkPoint + 1);

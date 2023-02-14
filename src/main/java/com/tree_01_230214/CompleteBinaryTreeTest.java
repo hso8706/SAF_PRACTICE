@@ -10,5 +10,6 @@ public class CompleteBinaryTreeTest {
         }
 
         tree.bfs();
+        tree.bfs2();
     }
 }

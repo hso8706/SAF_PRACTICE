@@ -1,6 +1,6 @@
 package com.exercise;
 
-public class Combination {
+public class Template_Combination {
     static int N, R, totalCount;
     static int[] totalArr, selectedArr;
     private void combi(int checkPoint, int startPoint){
