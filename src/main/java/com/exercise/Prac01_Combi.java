@@ -1,5 +1,6 @@
 package com.exercise;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Prac01_Combi {
@@ -13,6 +14,9 @@ public class Prac01_Combi {
         R = sc.nextInt();
         totalArr = new int[N];
         selectedArr = new int[R];
+        for (int i = 1; i < N+1; i++) {
+            totalArr[i-1] = i;
+        }
 
         combi(0, 0);
         System.out.println(totalCount);
@@ -20,6 +24,7 @@ public class Prac01_Combi {
 
     private static void combi(int cnt, int start) { // 중복을 막기위해 애초에 시작점을 체크하여 시작점을 변경함
         if(cnt == R){
+            System.out.println(Arrays.toString(selectedArr));
             totalCount++;
             return;
         }
