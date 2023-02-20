@@ -1,4 +1,4 @@
-package com.exercise;
+package com.exercise.template;
 
 public class Template_Subset {
     static int N, totalCount;

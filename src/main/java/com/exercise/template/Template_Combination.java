@@ -1,4 +1,4 @@
-package com.exercise;
+package com.exercise.template;
 
 public class Template_Combination {
     static int N, R, totalCount;
