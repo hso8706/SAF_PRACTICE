@@ -2,6 +2,11 @@ package aSAF.graph01_230222;
 
 import java.util.Scanner;
 
+/*
+### 인접 리스트1
+- 간선의 정보(현재 정점과 다음 정점 정보)를 리스토 구현
+-
+ */
 public class AdjListTest {
     static class Node{
         int vertex; // 값, 정점 번호
@@ -37,7 +42,6 @@ public class AdjListTest {
             //무향 그래프
             adjList[from] = new Node(to, adjList[from]); //원래의 첫째를 뒤로 세움, 새로운 노드의 값이 앞쪽으로 끼어든다
             adjList[to] = new Node(from, adjList[to]); //원래의 첫째를 뒤로 세움, 반대 방향
-
         }
         print();
     }
