@@ -6,6 +6,7 @@ import java.util.Queue;
 import java.util.Scanner;
 
 public class Graph_AdjustList {
+
     // 인접 리스트
     // 시작 정점과 도착 정점의 정보가 저장되어 있음.
     // LinkedList 와 개념적으로 유사성을 띈다.
