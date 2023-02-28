@@ -1,6 +1,7 @@
 package aSAF.disJoinSet_230227;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class SW7465_HaJungHo {
@@ -29,6 +30,7 @@ public class SW7465_HaJungHo {
                 int[] temp = new int[]{Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())};
                 union(temp[0], temp[1]); // 무리 만들기
             }
+            bw.write(Arrays.toString(parents));
             /*
             기존 생각
             1. 모든 사람의 번호를 루트 번호로 바꾸기
