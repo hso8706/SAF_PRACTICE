@@ -1,4 +1,4 @@
-package aSAF.MST_230228;
+package solution;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
