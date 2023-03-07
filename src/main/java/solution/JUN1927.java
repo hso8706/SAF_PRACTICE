@@ -29,7 +29,6 @@ public class JUN1927 {
         }
         bw.flush();
         bw.close();
-        // 이거 왜 안됐어
     }
 
 }
