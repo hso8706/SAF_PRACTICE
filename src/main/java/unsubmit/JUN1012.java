@@ -38,11 +38,11 @@ public class JUN1012 {
                 int x = Integer.parseInt(st.nextToken());
                 map[x][y] = 1; // 1: 배추가 있다는 표시
             }
-            for (int i = 0; i < N; i++) {
-                System.out.println(Arrays.toString(map[i]));
-            }
             marking();
+            bw.write(cnt-1 +"\n");
         }
+        bw.flush();
+        bw.close();
 
     }
 
@@ -65,13 +65,13 @@ public class JUN1012 {
             int[] current = queue.poll();
             int cx = current[0];
             int cy = current[1];
+            map[cx][cy] = cnt;
 
             for (int i = 0; i < 4; i++) {
-                int nx = cx + dx[0];
-                int ny = cy + dy[0];
-                if (nx<0 || ny<0 || nx>N || ny>M) continue;
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
+                if (nx<0 || ny<0 || nx>=N || ny>=M) continue;
                 if(!visited[nx][ny] && map[nx][ny] != 0) {
-                    map[nx][ny] = cnt;
                     visited[nx][ny] = true;
                     queue.offer(new int[]{nx, ny});
                 }
