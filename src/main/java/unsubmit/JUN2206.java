@@ -28,6 +28,10 @@ public class JUN2206 {
     아이디어 4. => 성공
     1. 아이디어3과 같은 개념
     - 하지만 가상 visited를 3차원 배열로 해결
+
+    개선
+    내 제출: 메모리 167108 KB, 시간 1360 ms
+    1등 : 메모리 67652 KB, 시간 376 ms
      */
     static int N, M; // 맵 크기
     static int[][] map;
