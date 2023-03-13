@@ -1,12 +1,12 @@
-package pocket;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
-import java.net.*;
-import java.io.*;
-
-public class PocketExam2 {
+public class SEOUL14_HAJUNGHO_5 {
 
     // 닉네임을 사용자에 맞게 변경해 주세요.
-    static final String NICKNAME = "DAEJEON02_JAVA";
+    static final String NICKNAME = "SEOUL14_HAJUNGHO";
 
     // 일타싸피 프로그램을 로컬에서 실행할 경우 변경하지 않습니다.
     static final String HOST = "127.0.0.1";
@@ -22,7 +22,8 @@ public class PocketExam2 {
     static final int TABLE_WIDTH = 254;
     static final int TABLE_HEIGHT = 127;
     static final int NUMBER_OF_BALLS = 6;
-    static final int[][] HOLES = { { 0, 0 }, { 127, 0 }, { 254, 0 }, { 0, 127 }, { 127, 127 }, { 254, 127 } };
+    static final int[][] HOLES = {{0, 0}, {127, 0}, {254, 0}, {0, 127}, {127, 127}, {254, 127}};
+    static final double DIAMETER = 5.73;
 
     public static void main(String[] args) {
 
@@ -74,7 +75,7 @@ public class PocketExam2 {
 
                 // Check Signal for Player Order or Close Connection
                 if (balls[0][0] == SIGNAL_ORDER) {
-                    order = (int)balls[0][1];
+                    order = (int) balls[0][1];
                     System.out.println("\n* You will be the " + (order == 1 ? "first" : "second") + " player. *\n");
                     continue;
                 } else if (balls[0][0] == SIGNAL_CLOSE) {
@@ -103,78 +104,116 @@ public class PocketExam2 {
 
                 // 여기서부터 코드를 작성하세요.
                 // 아래에 있는 것은 샘플로 작성된 코드이므로 자유롭게 변경할 수 있습니다.
-
-
-
-
-
+//                final double RAD = 5.73 / 2;
 
                 // whiteBall_x, whiteBall_y: 흰 공의 X, Y좌표를 나타내기 위해 사용한 변수
                 float whiteBall_x = balls[0][0];
                 float whiteBall_y = balls[0][1];
 
                 // targetBall_x, targetBall_y: 목적구의 X, Y좌표를 나타내기 위해 사용한 변수
-                float targetBall_x = balls[1][0];
-                float targetBall_y = balls[1][1];
+                float targetBall_x = balls[3][0];
+                float targetBall_y = balls[3][1];
+//                for(int i = 1; i<5; i++){
+//                    if (balls[i][0] == -1 && balls[i][1] == -1) continue;
+//                    if (i == 2 || i==4 )continue;
+//                    targetBall_x = balls[i][0];
+//                    targetBall_y = balls[i][1];
+//                }
+//                if (targetBall_x == -1){
+//                    targetBall_x = balls[5][0];
+//                    targetBall_y = balls[5][1];
+//                }
 
                 // width, height: 목적구와 흰 공의 X좌표 간의 거리, Y좌표 간의 거리
-                float width = Math.abs(targetBall_x - whiteBall_x);
-                float height = Math.abs(targetBall_y - whiteBall_y);
+                // 넣을 hole 위치 구하기
+                float playerToHoleWidth = Math.abs(whiteBall_x - HOLES[5][0]);
+                float playerToHoleHeight = Math.abs(whiteBall_y - HOLES[5][1]);
+                float playerToTargetWidth = Math.abs(targetBall_x - whiteBall_x);
+                float playerToTargetHeight = Math.abs(targetBall_y - whiteBall_y);
+                float targetToHoleWidth = Math.abs(targetBall_x - HOLES[5][0]);
+                float targetToHoleHeight = Math.abs(targetBall_y - HOLES[5][1]);
+
+//                for (int i = 0; i < 5; i++) {
+//                    playerToHoleWidth = Math.abs(whiteBall_x - HOLES[i][0]);
+//                    playerToHoleHeight = Math.abs(whiteBall_y - HOLES[i][1]);
+//                    targetToHoleWidth = Math.abs(targetBall_x - HOLES[i][0]);
+//                    targetToHoleHeight = Math.abs(targetBall_y - HOLES[i][1]);
+//                }
 
                 // radian: width와 height를 두 변으로 하는 직각삼각형의 각도를 구한 결과
                 //   - 1radian = 180 / PI (도)
                 //   - 1도 = PI / 180 (radian)
                 // angle : 아크탄젠트로 얻은 각도 radian을 degree로 환산한 결과
-                double radian = height > 0? Math.atan(width / height): 0;
-                angle = (float) ((180.0 / Math.PI) * radian);
+                double radian = 0;
+                angle = (float) 0;
 
                 // 목적구가 상하좌우로 일직선상에 위치했을 때 각도 입력
-                if (whiteBall_x == targetBall_x)
-                {
-                    if (whiteBall_y < targetBall_y)
-                    {
+                if (whiteBall_x == targetBall_x) {
+                    if (whiteBall_y < targetBall_y) {
                         angle = 0;
-                    }
-                    else
-                    {
+                    } else {
                         angle = 180;
                     }
-                }
-                else if (whiteBall_y ==targetBall_y)
-                {
-                    if (whiteBall_x < targetBall_x)
-                    {
+                } else if (whiteBall_y == targetBall_y) {
+                    if (whiteBall_x < targetBall_x) {
                         angle = 90;
-                    }
-                    else
-                    {
+                    } else {
                         angle = 270;
                     }
                 }
+                // 1사분면
+                if (whiteBall_x > targetBall_x && whiteBall_y < targetBall_y) {
+                    //가상구 구하기
+                    double a = Math.sqrt((targetToHoleHeight * targetToHoleHeight) + (targetToHoleWidth * targetToHoleWidth));
+                    double tempRadian = Math.atan(targetToHoleHeight / targetToHoleWidth);
+                    double temp_y = targetBall_y - (DIAMETER)*Math.sin(tempRadian);
+                    double temp_x = targetBall_x - (DIAMETER)*Math.cos(tempRadian);
 
+                    float tempToHole_x = Math.abs((float) temp_x - HOLES[5][0]);
+                    float tempToHole_y = Math.abs((float) temp_y - HOLES[5][1]);
+                    double bPow = (playerToHoleHeight * playerToHoleHeight) + (playerToHoleWidth * playerToHoleWidth);
+                    double cPow = (tempToHole_x * tempToHole_x) + (tempToHole_y * tempToHole_y);
+                    double aPow = (a+DIAMETER) * (a+DIAMETER);
+
+
+                    double angle_hole_player_target = Math.acos((bPow + cPow - aPow) / (2 * Math.sqrt(bPow) * Math.sqrt(cPow)));
+                    radian = Math.atan(playerToHoleWidth / playerToHoleHeight) + angle_hole_player_target;//
+                    angle = (float) Math.toDegrees(radian + angle_hole_player_target);//
+                }
+                // 2사분면
+                if (whiteBall_x < targetBall_x && whiteBall_y < targetBall_y) {
+                    //가상구 구하기
+                    double a = Math.sqrt((targetToHoleHeight * targetToHoleHeight) + (targetToHoleWidth * targetToHoleWidth));
+                    double tempRadian = Math.atan(targetToHoleHeight / targetToHoleWidth);
+                    double temp_y = targetBall_y - (2*5.73)*Math.sin(tempRadian);
+                    double temp_x = targetBall_x - (2*5.73)*Math.cos(tempRadian);
+
+                    double bPow = (playerToHoleHeight * playerToHoleHeight) + (playerToHoleWidth * playerToHoleWidth);
+                    double cPow = (playerToTargetHeight * playerToTargetHeight) + (playerToTargetWidth * playerToTargetWidth);
+                    double aPow = (a+(2*5.73)) * (a+(2*5.73));
+
+
+                    double angle_hole_player_target = Math.acos((bPow + cPow - aPow) / (2 * Math.sqrt(bPow) * Math.sqrt(cPow)));
+                    radian = Math.atan(playerToHoleWidth / playerToHoleHeight) ;//
+                    angle = (float) Math.toDegrees(radian + angle_hole_player_target);//
+                }
                 // 목적구가 흰 공을 중심으로 3사분면에 위치했을 때 각도를 재계산
-                if (whiteBall_x > targetBall_x && whiteBall_y > targetBall_y)
-                {
-                    radian = Math.atan(width / height);
+                if (whiteBall_x > targetBall_x && whiteBall_y > targetBall_y) {
+                    radian = Math.atan(playerToTargetWidth / playerToTargetHeight);
                     angle = (float) (((180.0 / Math.PI) * radian) + 180);
                 }
 
                 // 목적구가 흰 공을 중심으로 4사분면에 위치했을 때 각도를 재계산
-                else if (whiteBall_x < targetBall_x && whiteBall_y > targetBall_y)
-                {
-                    radian = Math.atan(height / width);
+                else if (whiteBall_x < targetBall_x && whiteBall_y > targetBall_y) {
+                    radian = Math.atan(playerToTargetHeight / playerToTargetWidth);
                     angle = (float) (((180.0 / Math.PI) * radian) + 90);
                 }
 
                 // distance: 두 점(좌표) 사이의 거리를 계산
-                double distance = Math.sqrt((width * width) + (height * height));
+                double distance = Math.sqrt((playerToTargetWidth * playerToTargetWidth) + (playerToTargetHeight * playerToTargetHeight));
 
                 // power: 거리 distance에 따른 힘의 세기를 계산
                 power = (float) distance;
-
-
-
-
 
 
                 // 주어진 데이터(공의 좌표)를 활용하여 두 개의 값을 최종 결정하고 나면,

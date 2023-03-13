@@ -1,4 +1,4 @@
-package pocket;
+package pocket.example;
 
 public class PocketExam1 {
     public static void main(String[] args) {
