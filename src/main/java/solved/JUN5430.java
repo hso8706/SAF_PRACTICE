@@ -20,47 +20,62 @@ public class JUN5430 {
     => 시간 초과 + 연속 sort가 안 됨
     
     ### 문제 해결2.
-    - 덱 자료 구조 활용
+    - 덱 자료 구조 활용 => 배열의 길이를 줄여야만 했음
+    
+    ### 에러
+    1. 배열을 문자열 배열로 받을때 실수
      */
     public static void main(String[] args) throws IOException {
         int T = Integer.parseInt(bf.readLine()); // Test case
         String[] p; // AC Functions
         int n; // intArr 개수
         ArrayDeque<Integer> intArr; // 정수 배열
+        boolean direction; // true == 정방향, false == 역방향
 
-        for (int i = 0; i < T; i++) {
+        label: for (int i = 0; i < T; i++) {
             p = bf.readLine().split(""); // AC Functions
             n = Integer.parseInt(bf.readLine());
             intArr = new ArrayDeque<>();
-            String[] temp = bf.readLine().split("");
-            for (int j = 1; j <= n; j++) {
-                intArr.offer(Integer.parseInt(temp[2 * j - 1]));
-            }
+            String[] temp = bf.readLine().replace("[", "").replace("]", "").split(",");
 
-            for (String s : p) {
-                if (s.equals("R")) { // 순서 뒤집기
-                    intArr.
+            for (int j = 0; j < n; j++) {
+                intArr.offer(Integer.parseInt(temp[j]));
+            }
+            direction = true;
+
+            for (int j = 0; j < p.length; j++) {
+                if (p[j].equals("R")) { // 순서 뒤집기
+                    if (intArr.size() == 0 && j == p.length-1){
+                        bw.write("[]\n");
+                        continue label;
+                    }
+                    direction = !direction;
                 } else { // 첫 번째 수 지우기
                     if (intArr.size() == 0) {
                         bw.write("error\n");
-                        break;
+                        continue label;
                     } else {
-                        intArr.remove(0); // 첫 번째 인덱스 제거
+                        if(direction) intArr.pollFirst();
+                        else intArr.pollLast(); // 첫 번째 인덱스 제거\
+                        if (intArr.size() == 0 && j == p.length-1) {
+                            bw.write("[]\n");
+                            continue label;
+                        }
                     }
                 }
             }
-            for (int j = 0; j < intArr.size(); j++) {
-                if (j == 0) {
-                    bw.write("[" + intArr.get(j) + ",");
-                } else if (j == intArr.size() - 1) {
-                    bw.write(intArr.get(j) + "]\n");
+            bw.write("[");
+            while(!intArr.isEmpty()) {
+                int cnt = intArr.size();
+                if (cnt == 1) {
+                    bw.write(intArr.pollFirst() + "]\n");
                 } else {
-                    bw.write(intArr.get(j) + ",");
+                    if(direction) bw.write(intArr.pollFirst() + ",");
+                    else bw.write(intArr.pollLast() + ",");
                 }
             }
         }
         bw.flush();
         bw.close();
-
     }
 }
