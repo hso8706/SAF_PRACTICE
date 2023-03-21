@@ -15,18 +15,21 @@ public class JUN1707 {
     ### 이분 그래프
     - 정점의 집합을 둘로 분할했을때, 각 집합 내의 정점들이 인접하지 않는 경우가 있으면 이분 그래프
     
-    ### 문제 해결
+    ### 문제 해결 1.
     - 이분 : 부분 집합을 이용, 공집합과 본인 집합은 제외
     - 탐색 : bfs 혹은 dfs
+    => 머리가 복잡해서 포기
+
+    ### 문제 해결 2.인터넷 서칭함
+    - 이분
+    : 두 가지 색으로 그룹을 구분
+    : 시작 지점 색칠, bfs를 통해서 순회하며 인접 지점을 본인과 다른 색으로 색칠
+    : 모두 위와 같은 방법으로 칠해지면 이분 그래프, 인접 그래프가 이미 본인과 같은 색으로 칠해져 있으면 이분 그래프 안 됨
      */
     static int K; //K: test case
     static int V, E; //V: 정점의 개수, E: 간선의 개수
     static ArrayList<Integer>[] adjList;
-    static String result;
-    // subset
-    static int[] total;
-    static ArrayList<Integer> groupA, groupB;
-    static boolean[] isSelected;
+    static String[] division; // 분할 그룹을 표시할 배열, 정점 수 만큼 존재
 
     public static void main(String[] args) throws IOException {
         K = Integer.parseInt(bf.readLine());
@@ -36,6 +39,7 @@ public class JUN1707 {
             V = Integer.parseInt(st.nextToken());
             E = Integer.parseInt(st.nextToken());
             adjList = new ArrayList[V + 1]; // idx = 1 부터 사용
+            division = new String[V+1];
             for (int j = 0; j < V + 1; j++) {
                 adjList[j] = new ArrayList<>(); // 초기화
             }
@@ -47,87 +51,41 @@ public class JUN1707 {
                 adjList[from].add(to);
                 adjList[to].add(from); // 무향 그래프
             }
-            //분할 파트: 부분 집합
-            total = new int[V + 1];
-            groupA = new ArrayList<>();
-            groupB = new ArrayList<>();
-            isSelected = new boolean[V + 1];
-            for (int j = 1; j < V + 1; j++) {
-                total[j] = j; // 접점 수 만큼 초기화
+            boolean result = true;
+            //bfs 실시
+            for (int j = 1; j < V+1; j++) { // 비연결 그래프도 고려
+                if(!result) break; // result 갱신을 막기 위해 이분 그래프가 아님이 확인되면 바로 종료
+                if(division[j] == null) result = bfs(j);
             }
-            subset(0, new boolean[V + 1]);
-            if(result != null) bw.write(result + "\n");
-            else bw.write("NO\n");
+            if (result) {
+                bw.write("YES\n");
+            } else {
+                bw.write("NO\n");
+            }
         }
         bw.flush();
         bw.close();
     }
 
-    private static void subset(int cnt, boolean[] isSelected) throws IOException {
-        if (cnt == V + 1) {
-            int ch = 0;
-            for (int i = 1; i < V + 1; i++) {
-                if (isSelected[i]) {
-                    groupA.add(total[i]);
-                } else {
-                    groupB.add(total[i]);
-                    ch++;
-                }
-            }
-            if (ch == V || ch == 0) return; // group 중 하나가 공집합인 경우
-            if(bfsS(groupA.get(0), new boolean[V+1]) && bfsB(groupB.get(0), new boolean[V+1])) result = "YES";
-            return;
-        }
-
-        isSelected[cnt] = true;
-        subset(cnt + 1, isSelected);
-        isSelected[cnt] = false;
-        subset(cnt + 1, isSelected);
-    }
-
-    private static boolean bfsB(int start, boolean[] visited) {
+    private static boolean bfs(int start) {
         Queue<Integer> queue = new ArrayDeque<>();
         queue.offer(start);
-        visited[start] = true;
-        int cnt = 0;
+        division[start] = "g1"; // 시작 그룹: g1
 
         while(!queue.isEmpty()){
             int current = queue.poll();
-            if(!groupB.contains(current)) {
-                cnt++;
-                continue;
-            }
-            for(int vertex : adjList[current]){
-                if(!visited[vertex]){
-                    visited[vertex] = true;
+            for(int vertex : adjList[current]){//현재 정점에 인접 정점 순회
+                if(division[current].equals(division[vertex])){
+                    return false; // 이분 그래프가 아님
+                }
+                else{
+                    if(division[vertex] != null) continue; // null 아닌데 다른 그룹인 경우는 이미 방문 한 곳
+                    if(division[current].equals("g1")) division[vertex] = "g2";
+                    else division[vertex] = "g1";
                     queue.offer(vertex);
                 }
             }
         }
-        if(cnt == groupB.size()) return true;
-        return false;
-    }
-
-    private static boolean bfsS(int start, boolean[] visited) {
-        Queue<Integer> queue = new ArrayDeque<>();
-        queue.offer(start);
-        visited[start] = true;
-        int cnt = 0;
-
-        while(!queue.isEmpty()){
-            int current = queue.poll();
-            if(!groupA.contains(current)) {
-                cnt++;
-                continue;
-            }
-            for(int vertex : adjList[current]){
-                if(!visited[vertex]){
-                    visited[vertex] = true;
-                    queue.offer(vertex);
-                }
-            }
-        }
-        if(cnt == groupA.size()) return true;
-        return false;
+        return true; // 이분 그래프임
     }
 }
