@@ -1,7 +1,10 @@
 package solved;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class JUN2146 {
     static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
@@ -18,6 +21,10 @@ public class JUN2146 {
     => 3차원 boolean 배열 이용, 실패
     => 각 섬의 임의 지점을 저장하기 + 이중 반복문 제거, 실패
     => 각 섬의 외곽만 특정짓고 모두 포인트 저장해서 순회, 성공
+
+    개선
+    내 제출: 메모리 79536 KB, 시간 276 ms
+    1등 : 메모리 12104 KB, 시간 88 ms
      */
     static int[] dx = new int[]{1, 0, -1, 0}; // dx가 세로
     static int[] dy = new int[]{0, 1, 0, -1}; // 상우하좌

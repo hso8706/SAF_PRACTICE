@@ -1,9 +1,6 @@
 package solved;
 
 import java.io.*;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class JUN1149 {
