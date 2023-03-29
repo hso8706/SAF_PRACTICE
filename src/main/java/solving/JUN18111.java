@@ -1,4 +1,4 @@
-package solved;
+package solving;
 
 import java.io.*;
 import java.util.StringTokenizer;
