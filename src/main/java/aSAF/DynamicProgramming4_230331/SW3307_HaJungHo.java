@@ -18,6 +18,7 @@ public class SW3307_HaJungHo {
 
     public static void main(String[] args) throws IOException {
         T = Integer.parseInt(bf.readLine());
+
         for (int tc = 1; tc <= T; tc++) {
             bw.write("#" + tc + " ");
 
@@ -37,7 +38,11 @@ public class SW3307_HaJungHo {
                     }
                 }
             }
-            bw.write(dp[N-1] +"\n");
+            int max = Integer.MIN_VALUE;
+            for (int j = 0; j <N; j++) {
+                if(dp[j] > max) max = dp[j];
+            }
+            bw.write(max +"\n");
         }
         bw.flush();
         bw.close();
