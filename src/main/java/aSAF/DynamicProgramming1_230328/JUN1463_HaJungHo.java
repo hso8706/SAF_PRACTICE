@@ -1,4 +1,4 @@
-package aSAF.DynamicProgramming_230328;
+package aSAF.DynamicProgramming1_230328;
 
 import java.io.*;
 import java.util.StringTokenizer;

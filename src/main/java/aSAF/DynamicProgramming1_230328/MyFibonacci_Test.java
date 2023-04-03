@@ -1,4 +1,4 @@
-package aSAF.DynamicProgramming_230328;
+package aSAF.DynamicProgramming1_230328;
 
 public class MyFibonacci_Test {
 	static int[] memo = new int[100];
