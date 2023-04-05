@@ -1,4 +1,4 @@
-package aSAF.ASolution_230307;
+package aSAF.solution01_230307;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
