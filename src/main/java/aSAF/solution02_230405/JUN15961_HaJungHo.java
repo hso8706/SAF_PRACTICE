@@ -44,31 +44,38 @@ public class JUN15961_HaJungHo {
         bw.close();
     }
 
+    /*
+    - N: 2 ~ 3,000,000 // k: 2 ~ 3,000
+    - idea1 : 이중으로 반복문을 만들면 시간초과 나오니까 deque 을 사용해서 1차 반복문으로 해결하자
+        - 실패 => contains 메서드가 의심된다 => ArrayDeque.contains 가 순회하는 것 같음 => Hash 를 사용해자, Hash 류의 contains 는 시간 복잡도 O(1)
+     */
+
     private static void lookAtTheCase() {
-        Deque<Integer> temp = new ArrayDeque<>();
-        int[] cnt = new int[N];
-        for (int i = 0; i < N + k-1; i++) {
-            boolean isContained = false;
-            int cntIdx = i-(k-1);
-            if(i < k) {
-                if(!temp.contains(sushiList[i])) cnt[0]++;
-                temp.offer(sushiList[i]);
+        Map<Integer, Integer> temp = new HashMap<>();
+        for (int i = 0; i < N + k - 1; i++) {
+            boolean isContained = false; // 쿠폰 번호 포함 여부
+            int leftIdx = i-k;
+            int rightIdx = i; // 원형의 배열을 만드는 로직을 위한 변수
+            // 0 ~ k-1 까지 저장
+            if (i < k) {
+                if (temp.containsKey(sushiList[i])) temp.put(sushiList[i], temp.get(sushiList[i]) + 1);
+                else temp.put(sushiList[i], 1);
             }
+            // left 제거, right 추가
             else {
-                if(!temp.contains(temp.pollFirst())) cnt[cntIdx] = cnt[cntIdx-1]-1;
-                else cnt[cntIdx] = cnt[cntIdx-1];
-                int nextIdx = i;
-                if (nextIdx >= N) nextIdx -= N;
-                if(!temp.contains(sushiList[nextIdx])) cnt[cntIdx]++;
-                temp.offerLast(sushiList[nextIdx]);
+                // left 제거 과정
+                if (temp.get(sushiList[leftIdx]) - 1 == 0) temp.remove(sushiList[leftIdx]);
+                else temp.put(sushiList[leftIdx], temp.get(sushiList[leftIdx]) - 1);
+
+                // right 추가 과정
+                if (rightIdx >= N) rightIdx -= N; // 0 ~ N-1 범위를 넘어서는 순간 0 인덱스로 회귀
+                if (temp.containsKey(sushiList[rightIdx])) temp.put(sushiList[rightIdx], temp.get(sushiList[rightIdx]) + 1);
+                else temp.put(sushiList[rightIdx], 1);
             }
 
-            if(temp.contains(c)) isContained = true;
-            if(i == k-1) cntIdx = 0;
-            if(i >= k-1) {
-                if (!isContained) maxValue = Math.max(maxValue, cnt[cntIdx] + 1);
-                else maxValue = Math.max(maxValue, cnt[cntIdx]);
-            }
+            if (temp.containsKey(c)) isContained = true;
+            if (!isContained) maxValue = Math.max(maxValue, temp.keySet().size()+1);
+            else maxValue = Math.max(maxValue, temp.keySet().size());
         }
     }
 }
