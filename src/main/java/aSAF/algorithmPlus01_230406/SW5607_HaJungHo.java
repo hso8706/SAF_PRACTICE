@@ -1,4 +1,4 @@
-package aSAF.algorithmPlus_230406;
+package aSAF.algorithmPlus01_230406;
 
 import java.io.*;
 import java.util.StringTokenizer;
