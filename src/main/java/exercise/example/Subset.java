@@ -1,33 +1,32 @@
-package exercise.prac04;
+package exercise.example;
 
 import java.util.Scanner;
 
 public class Subset {
-    static int N, totalCount;
-    static int[] numbers;
+    static int N, totalCnt;
+    static int[] totals;
     static boolean[] isSelected;
 
     public static void main(String[] args) {
-        Scanner sc= new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
-        numbers = new int[N];
+        totals = new int[N];
         isSelected = new boolean[N];
-
         for (int i = 0; i < N; i++) {
-            numbers[i] = i+1;
+            totals[i] = i+1;
         }
 
         subset(0);
-        System.out.println(totalCount);
+        System.out.println(totalCnt);
     }
 
     private static void subset(int cnt) {
         if(cnt == N){
-            totalCount++;
-            for(int i=0; i<N; i++){
-                System.out.print((isSelected[i] ? i : "x") + " ");
+            for (int i = 0; i < N; i++) {
+                System.out.print((isSelected[i] ? totals[i] : "x") + " ");
             }
             System.out.println();
+            totalCnt++;
             return;
         }
 

@@ -1,4 +1,4 @@
-package exercise.pracT_주석처리;
+package exercise.template;
 
 //트리 구조를 배열로 표현하는 방법
 public class Tree { // 제네릭 사용: 노드들의 참조형의 자유도를 높임//nodes 변수 할당

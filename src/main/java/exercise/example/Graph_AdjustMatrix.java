@@ -1,4 +1,4 @@
-package exercise.prac04;
+package exercise.example;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

@@ -1,4 +1,4 @@
-package exercise.pracT_주석처리;
+package exercise.practice;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

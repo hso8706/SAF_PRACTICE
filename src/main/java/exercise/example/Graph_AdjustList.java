@@ -1,4 +1,4 @@
-package exercise.prac04;
+package exercise.example;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class Graph_AdjustList {
     // LinkedList 와 개념적으로 유사성을 띈다.
     // Node 클래스를 만들거나 ArrayList[] 로 주로 구현
     // ArrayList 로 된 배열을 쓰는 이유
-        // : 2차원 형태의 ArrayList 를 쓰기 위해서
+    // : 2차원 형태의 ArrayList 를 쓰기 위해서
 
     static ArrayList<Integer>[] adjList; // 인접 리스트 선언
     static int N; // 정점 수
@@ -26,7 +26,7 @@ public class Graph_AdjustList {
         for (int i = 0; i < N; i++) { // 선언 시 null 이 할당되기 때문에 빈 ArrayList 로 초기화해주는 과정
             adjList[i] = new ArrayList<>();
         }
-        
+
         int from, to;
         for (int i = 0; i < M; i++) { // 간선 수, 즉 제공되는 정점의 쌍을 입력받아 저장하는 반복문
             from = sc.nextInt();
