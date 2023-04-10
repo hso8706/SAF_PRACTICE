@@ -24,6 +24,7 @@ public class SubsetOthers {
     private static void subset(int cnt) {
         if(cnt == N){
             System.out.println(Arrays.toString(isSelected));
+            totalCnt++;
             return;
         }
 
