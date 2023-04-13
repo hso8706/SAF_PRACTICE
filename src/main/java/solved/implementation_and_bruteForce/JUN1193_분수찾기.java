@@ -1,4 +1,4 @@
-package solved;
+package solved.implementation_and_bruteForce;
 
 import java.io.*;
 import java.util.ArrayList;

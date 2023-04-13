@@ -1,4 +1,4 @@
-package solving;
+package solved.implementation_and_bruteForce;
 
 import java.io.*;
 import java.util.*;
@@ -18,7 +18,7 @@ public class JUN7568_덩치 {
     - 목표: 입력받은 사람 순서대로 등수를 출력할 것
     - 2<=N<=50
         - 완탐 가능
-        - PQ 사용 => 둘 다 양수이면 양수 반환하게?
+        - PQ 이용 혹은 원리 이용해서 정리된 배열 만들기
      */
     static class PersonInfo{
         int w; //weight
@@ -36,7 +36,6 @@ public class JUN7568_덩치 {
     }
     static int N;
     static PersonInfo[] persons;
-//    static Map<Integer, PersonInfo> rank;
     static PersonInfo[] rank;
 
     public static void main(String[] args) throws IOException {
@@ -51,5 +50,25 @@ public class JUN7568_덩치 {
             persons[i] = new PersonInfo(w,h);
         }
 
+        /*
+        완전 탐색
+        - 이중 반복문 사용
+        - 완전 탐색이 종료되는 매 시점마다 각각의 사람에게 rank가 매겨진다.
+        - 완전 탐색 중 본인보다 덩치가 큰 사람이 나오면 rank가 증가한다(밀린다). 그 외의 경우에는 rank가 유지된다.
+         */
+        for (int i = 1; i < N+1; i++) {
+            int rank = 1;
+            for (int j = 1; j < N+1; j++) {
+                if(i == j) continue;
+                if(persons[i].w < persons[j].w && persons[i].h < persons[j].h) ++rank;
+            }
+            persons[i].setR(rank);
+        }
+
+        for (int i = 1; i < N+1; i++) {
+            bw.write(persons[i].r + " ");
+        }
+        bw.flush();
+        bw.close();
     }
 }
