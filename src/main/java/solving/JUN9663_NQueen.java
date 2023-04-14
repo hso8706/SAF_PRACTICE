@@ -39,23 +39,16 @@ public class JUN9663_NQueen {
         board = new int[N][N];
         possibleCnt = 0;
 
-        n_queen(N, 1);
+        n_queen(N, 0, 1);
     }
 
-    private static void n_queen(int nCnt, int mark) {
+    private static void n_queen(int nCnt, int row, int mark) {
         if(nCnt == 0) {
             possibleCnt++;
             return;
         }
         for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if(board[i][j] == 0){
-                    // 퀸을 놓을 수 있음
-                    attackQ(i, j, mark);
-                    n_queen(nCnt-1, mark++);
-                    recover(mark);
-                }
-            }
+            board[row][i] = mark;
         }
     }
 
@@ -68,14 +61,14 @@ public class JUN9663_NQueen {
     }
 
     private static void attackQ(int x, int y, int mark) {
-        // 가로
-        for (int i = 0; i < N; i++) {
-            if (board[x][i] == 0 ) board[x][i] = mark;
-        }
-        // 세로
-        for (int i = 0; i < N; i++) {
-            if (board[x][i] == 0 ) board[i][y] = mark;
-        }
+//        // 가로
+//        for (int i = 0; i < N; i++) {
+//            if (board[x][i] == 0 ) board[x][i] = mark;
+//        }
+//        // 세로
+//        for (int i = 0; i < N; i++) {
+//            if (board[x][i] == 0 ) board[i][y] = mark;
+//        }
 //        // 대각선
 //        for (int i = 0; i < ; i++) {
 //
