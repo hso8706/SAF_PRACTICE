@@ -78,14 +78,73 @@ public class JUN14500_테트로미노 {
         fifthTet(start);
     }
 
-    private static void firstTet(Pair start) {
+    private static void fifthTet(Pair start) {
+    }
 
+    private static void forthTet(Pair start) {
+        //2방
+        for (int i = 1; i < 3; i++) {
+            if(isSafe(start.x+1, start.y+1)) return;
+
+            int tempSum = board[start.x][start.y];
+            tempSum += board[start.x][start.y+1];
+            tempSum += board[start.x+1][start.y];
+            tempSum += board[start.x+1][start.y+1];
+            maxSum = Math.max(tempSum, maxSum);
+        }
+    }
+
+    private static void thirdTet(Pair start) {
+        //4방 x 2대칭
+        again: for (int i = 0; i < 4; i++) {
+            int tempSum = board[start.x][start.y];
+            int nx = start.x;
+            int ny = start.y;
+            for (int j = 0; j < 2; j++) {
+                nx += dx[i];
+                ny += dy[i];
+                if(isSafe(nx, ny)) continue again;
+                tempSum += board[nx][ny];
+            }
+            //끝에서 꺾기
+            int rd = i+1;
+            int ld = i-1;
+            if (rd==4) rd=0;
+            if (ld==-1) ld=3;
+            int rx = nx + dx[rd];
+            int ry = ny + dy[rd];
+            if(!isSafe(rx, ry)) tempSum += board[rx][ry];
+            int lx = nx + dx[ld];
+            int ly = ny + dy[ld];
+            if(!isSafe(lx, ly)) tempSum += board[lx][ly];
+        }
+    }
+
+    private static boolean isSafe(int nx, int ny) {
+        return nx < 0 || ny < 0 || nx >= N || ny >= M;
+    }
+
+    private static void secondTet(Pair start) {
+        //1방
+        if(isSafe(start.x+1, start.y+1)) return;
+        
+        int tempSum = board[start.x][start.y];
+        tempSum += board[start.x][start.y+1];
+        tempSum += board[start.x+1][start.y];
+        tempSum += board[start.x+1][start.y+1];
+        maxSum = Math.max(tempSum, maxSum);
+    }
+
+    private static void firstTet(Pair start) {
+        //4방, 연속 3개 추가
         for (int i = 0; i < 4; i++) {
             int tempSum = board[start.x][start.y];
+            int nx = start.x;
+            int ny = start.y;
             for (int j = 0; j < 3; j++) {
-                int nx = start.x + dx[i];
-                int ny = start.y + dy[i];
-                if(nx < 0 || ny<0 || nx>=N || ny>=M) continue;
+                nx += dx[i];
+                ny += dy[i];
+                if(isSafe(nx, ny)) continue;
                 tempSum += board[nx][ny];
             }
             maxSum = Math.max(tempSum, maxSum);
