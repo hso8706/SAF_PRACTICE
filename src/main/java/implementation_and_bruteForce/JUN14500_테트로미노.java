@@ -24,8 +24,8 @@ public class JUN14500_테트로미노 {
     static int[][] board;
     static int maxSum; //setTetromino를 통해 하나의 테트로미노가 자리를 잡은 경우의 총합
 
-    static int[] dx = new int[]{0, -1, 1, 0}; // 우방향, 상방향, 하방향, 좌방향
-    static int[] dy = new int[]{1, 0, 0, -1};
+    static int[] dx = new int[]{0, 1, 0}; // 우방향, 상방향, 하방향, 좌방향
+    static int[] dy = new int[]{1, 0, -1};
 
     static class Pair { // 좌표 용도
         int x;
@@ -112,7 +112,7 @@ public class JUN14500_테트로미노 {
             return;
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             int nx = pair.x + dx[i];
             int ny = pair.y + dy[i];
             int nc = pair.c + 1;
