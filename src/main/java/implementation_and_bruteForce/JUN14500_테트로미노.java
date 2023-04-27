@@ -23,8 +23,9 @@ public class JUN14500_테트로미노 {
     static int N, M;
     static int[][] board;
     static int maxSum; //setTetromino를 통해 하나의 테트로미노가 자리를 잡은 경우의 총합
+    static boolean[][] visited;
 
-    static int[] dx = new int[]{0, 1, 0}; // 우방향, 상방향, 하방향, 좌방향
+    static int[] dx = new int[]{0, 1, 0}; // 우방향, 하방향, 좌방향
     static int[] dy = new int[]{1, 0, -1};
 
     static class Pair { // 좌표 용도
@@ -46,6 +47,7 @@ public class JUN14500_테트로미노 {
         st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
+        visited = new boolean[N][M];
         maxSum = Integer.MIN_VALUE;
         board = new int[N][M];
         for (int i = 0; i < N; i++) {
@@ -62,10 +64,10 @@ public class JUN14500_테트로미노 {
          */
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                boolean[][] visited = new boolean[N][M];
                 visited[i][j] = true;
-                setTetromino(new Pair(i, j, 1, board[i][j]), visited);
+                setTetromino(new Pair(i, j, 1, board[i][j]));
                 exceptionTet(i, j);
+                visited[i][j] = false;
             }
         }
         System.out.println(maxSum);
@@ -75,38 +77,50 @@ public class JUN14500_테트로미노 {
         int sumRow = board[i][j];
         int rx = i;
         int ry = j;
+        int notSafe = 0;
         for (int k = 0; k < 2; k++) {
             rx += dx[0];
             ry += dy[0];
-            if(isNotSafe(rx,ry)) continue;
+            if(isNotSafe(rx,ry)) {
+                notSafe++;
+                continue;
+            }
             sumRow += board[rx][ry];
         }
-        if(!isNotSafe(i-1, j+1)) {
-            maxSum = Math.max(maxSum, sumRow + board[i-1][j+1]);
+        if(notSafe == 0){
+            if(!isNotSafe(i-1, j+1)) {
+                maxSum = Math.max(maxSum, sumRow + board[i-1][j+1]);
+            }
+            if(!isNotSafe(i+1, j+1)) {
+                maxSum = Math.max(maxSum, sumRow + board[i+1][j+1]);
+            }
         }
-        if(!isNotSafe(i+1, j+1)) {
-            maxSum = Math.max(maxSum, sumRow + board[i+1][j+1]);
-        }
+        notSafe = 0;
 
         int cx = i;
         int cy = j;
         int sumCol = board[i][j];
         for (int k = 0; k < 2; k++) {
-            cx += dx[2];
-            cy += dy[2];
-            if(isNotSafe(cx,cy)) continue;
+            cx += dx[1];
+            cy += dy[1];
+            if(isNotSafe(cx,cy)) {
+                notSafe++;
+                continue;
+            }
             sumCol += board[cx][cy];
         }
-        if(!isNotSafe(i+1, j+1)) {
-            maxSum = Math.max(maxSum, sumCol + board[i+1][j+1]);
-        }
-        if(!isNotSafe(i+1, j-1)) {
-            maxSum = Math.max(maxSum, sumCol + board[i+1][j-1]);
+        if(notSafe == 0){
+            if (!isNotSafe(i + 1, j + 1)) {
+                maxSum = Math.max(maxSum, sumCol + board[i + 1][j + 1]);
+            }
+            if (!isNotSafe(i + 1, j - 1)) {
+                maxSum = Math.max(maxSum, sumCol + board[i + 1][j - 1]);
+            }
         }
 
     }
 
-    private static void setTetromino(Pair pair, boolean[][] visited) {
+    private static void setTetromino(Pair pair) {
         if(pair.c == 4){
             maxSum = Math.max(maxSum, pair.s);
             return;
@@ -120,7 +134,7 @@ public class JUN14500_테트로미노 {
             int ns = pair.s + board[nx][ny];
             if(!visited[nx][ny]) {
                 visited[nx][ny] = true;
-                setTetromino(new Pair(nx, ny, nc, ns), visited);
+                setTetromino(new Pair(nx, ny, nc, ns));
                 visited[nx][ny] = false;
             }
         }
