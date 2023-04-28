@@ -24,8 +24,12 @@ public class JUN16234_인구이동 {
     static int[][] map;
     static boolean[][] visited;
     static boolean[][] boardLine;
-    static int[] dx = new int[]{1,-1,0,0};
-    static int[] dy = new int[]{0,0,1,-1};
+//    static int[] dx = new int[]{1,-1,0,0};
+//    static int[] dy = new int[]{0,0,1,-1};
+    static int[] dx = new int[]{1,0,-1,0};
+    static int[] dy = new int[]{0,1,0,-1};
+
+    static boolean flag;
 
     public static void main(String[] args) throws IOException {
         st = new StringTokenizer(bf.readLine());
@@ -43,33 +47,88 @@ public class JUN16234_인구이동 {
 
         //bfs 로 열 수 있는 국가 체크(국경선 열기)
         //visited 와 boardLine 을 따로 운영
-        movePopulation(new Pair(0, 0));
+        int days = 0;
+        flag = true;
+        while(flag){
+            boardLine = new boolean[N][N];
+            checkAllDir();
+            if(flag) days++;
+        }
+        bw.write(days+"");
+        bw.flush();
+        bw.close();
     }
 
-    private static void movePopulation(Pair start) {
+    private static void checkAllDir() {
+        for (int x = 0; x < N; x++) {
+            for (int y = 0; y < N; y++) {
+                for (int i = 0; i < 2; i++) {
+                    int nx = x + dx[i];
+                    int ny = y + dy[i];
+                    if(nx < 0 || ny<0 || nx>=N || ny>=N) continue;
+                    int gap = Math.abs(map[nx][ny] - map[x][y]);
+
+                    if(gap >= L && gap <= R){
+                        boardLine[nx][ny] = true;
+                        boardLine[x][y] = true;
+                    }
+                }
+            }
+        }
+
+        int cnt = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if(boardLine[i][j]) {
+                    union(new Pair(i,j));
+                    cnt++;
+                }
+            }
+        }
+        flag = cnt != 0;
+    }
+
+    private static void union(Pair pair) {
         Deque<Pair> queue = new ArrayDeque<>();
-        queue.offer(start);
-        visited[start.x][start.y] = true;
+        queue.offer(pair);
+        int sum = 0;
+        int cnt = 0;
+        boolean[][] temp = new boolean[N][N];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                temp[i][j] = boardLine[i][j];
+            }
+        }
+
+        boardLine[pair.x][pair.y] = false;
 
         while(!queue.isEmpty()){
             Pair current = queue.poll();
             int cx = current.x;
             int cy = current.y;
+            sum += map[cx][cy];
+            cnt++;
 
             for (int i = 0; i < 4; i++) {
                 int nx = cx + dx[i];
                 int ny = cy + dy[i];
                 if(nx < 0 || ny<0 || nx>=N || ny>=N) continue;
-                if(!visited[nx][ny]){
-                    visited[nx][ny] = true;
-                    int gap = map[cx][cy] - map[nx][ny];
-                    if(gap >= L || gap <= R){
-                        boardLine[cx][cy] = true;
-                        boardLine[nx][ny] = true;
-                    }
+                if(boardLine[nx][ny]) {
+                    boardLine[nx][ny]=false;
+                    queue.offer(new Pair(nx,ny));
+                }
+            }
+        }
+        int movePop = (int) sum/cnt;
 
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if(temp[i][j]) {
+                    temp[i][j] = false;
+                    map[i][j] = movePop;
                 }
             }
         }
     }
+
 }
