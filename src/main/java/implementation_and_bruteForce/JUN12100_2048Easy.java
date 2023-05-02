@@ -11,21 +11,7 @@ public class JUN12100_2048Easy {
     static StringTokenizer st;
 
     /*
-    ### 2048(Easy)
-    - 같은 값을 갖는 두 블록이 충돌하면 합쳐짐
-        - 한 턴 내에서 충돌로 합쳐진 블록은 해당 턴에 또 합쳐지지 않는다.
-    - 다른 값을 갖는 두 블록은 합쳐지지 않는다
-    - 한 번 이동하는 움직임 => 판을 기울여서 모든 칸이 한 번에 끝까지 쏠리는 꼴
-        - 블록이 이동하는 방향에 따라서 반복문의 시작점을 달리하면 구현할 수 있을 듯 하다
-        - 블록이 이동하는 방향의 순서가 모든 순열의 경우의 수 겠구나. => 그냥 순열이 아닌 중복 순열이네
-
-    - 시간 복잡도
-        - 순열 : 4*4*4*4*4 => 1024
-        
-    - 출력
-    => 최대 5번 이동시켜서 얻을 수 있는 가장 큰 블록의 값 출력
-    - 최대값이 끝이 아닌 중간에 위치할 수 있음 => 모든 로직 처리가 끝난 후 완탐으로 찾는 메서드 사용
-    - 블록이 분해되는 경우가 없으니 필수로 5번 모두 이동 시킨 후 완탐 메서드 호출
+    ### 2048(Hard)
      */
     static int N;
     static int[][] board;
@@ -34,7 +20,6 @@ public class JUN12100_2048Easy {
 
     static char[] dir = new char[]{'u', 'd', 'l', 'r'};
     static char[] dirCase;
-    static boolean[] isSelected;
     static int maxBlock;
 
     public static void main(String[] args) throws IOException {
@@ -47,28 +32,28 @@ public class JUN12100_2048Easy {
             }
         }
 
-        isSelected = new boolean[5];
-        dirCase = new char[5];
-        maxBlock = Integer.MIN_VALUE;
+        dirCase = new char[10];
+        maxBlock = 0;
         makeDirCase(0);
         System.out.println(maxBlock);
     }
 
     private static void makeDirCase(int cnt) {
-        if (cnt == 5) {
-            // 하나의 순열 완성
-            moveBlocks();
-            findMax();
+        if (cnt == 10) {
+            moveBlocks(); // 하나의 경우의 수 완성(5번 모두 이동)
+            findMax(); // 완성된 경우의 수에서 최대값 찾기
             return;
         }
 
         for (int i = 0; i < 4; i++) {
+//            if (cnt!=0 && dirCase[cnt-1] == dir[i]) continue;
             dirCase[cnt] = dir[i];
             makeDirCase(cnt + 1);
         }
     }
 
     private static void moveBlocks() {
+        // temp 은 매번 새로 초기화
         temp = new int[N][N]; //복사해서 사용
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
@@ -82,13 +67,14 @@ public class JUN12100_2048Easy {
                     for (int y = 0; y < N; y++) {
                         int stackIdx = 1; // 합쳐지지 않는 경우에 블록이 쌓이는 위치
                         for (int x = 1; x < N; x++) {
+                            if (temp[x][y] == 0) continue;
                             //블록이 놓인 곳(stackIdx-1)의 정보
                             //1. 블록의 값이 0 => 이전에 과정에서 블록이 합쳐져서 생기는 상황
                             if (temp[stackIdx - 1][y] == 0) {
                                 //0인 곳으로 이동하는 개념
                                 temp[stackIdx - 1][y] = temp[x][y];
                                 temp[x][y] = 0;
-                                stackIdx++;
+                                //그냥 이동만 한 경우는 stackIdx 의 변화를 주면 안된다.
                             }
                             //2. 블록의 값이 움직이는 블록의 값과 다름
                             else if (temp[stackIdx - 1][y] != temp[x][y]) {
@@ -113,13 +99,14 @@ public class JUN12100_2048Easy {
                     for (int y = 0; y < N; y++) {
                         int stackIdx = N - 2; // 합쳐지지 않는 경우에 블록이 쌓이는 위치
                         for (int x = N - 2; x >= 0; x--) {
+                            if (temp[x][y] == 0) continue;
                             //블록이 놓인 곳(stackIdx+1)의 정보
                             //1. 블록의 값이 0 => 이전에 과정에서 블록이 합쳐져서 생기는 상황
                             if (temp[stackIdx + 1][y] == 0) {
                                 //0인 곳으로 이동하는 개념
                                 temp[stackIdx + 1][y] = temp[x][y];
                                 temp[x][y] = 0;
-                                stackIdx--;
+                                //그냥 이동만 한 경우는 stackIdx 의 변화를 주면 안된다.
                             }
                             //2. 블록의 값이 움직이는 블록의 값과 다름
                             else if (temp[stackIdx + 1][y] != temp[x][y]) {
@@ -144,13 +131,14 @@ public class JUN12100_2048Easy {
                     for (int x = 0; x < N; x++) {
                         int stackIdx = 1; // 합쳐지지 않는 경우에 블록이 쌓이는 위치
                         for (int y = 1; y < N; y++) {
+                            if (temp[x][y] == 0) continue;
                             //블록이 놓인 곳(stackIdx-1)의 정보
                             //1. 블록의 값이 0 => 이전에 과정에서 블록이 합쳐져서 생기는 상황
                             if (temp[x][stackIdx - 1] == 0) {
                                 //0인 곳으로 이동하는 개념
                                 temp[x][stackIdx - 1] = temp[x][y];
                                 temp[x][y] = 0;
-                                stackIdx++;
+                                //그냥 이동만 한 경우는 stackIdx 의 변화를 주면 안된다.
                             }
                             //2. 블록의 값이 움직이는 블록의 값과 다름
                             else if (temp[x][stackIdx - 1] != temp[x][y]) {
@@ -175,13 +163,14 @@ public class JUN12100_2048Easy {
                     for (int x = 0; x < N; x++) {
                         int stackIdx = N - 2; // 합쳐지지 않는 경우에 블록이 쌓이는 위치
                         for (int y = N - 2; y >= 0; y--) {
+                            if (temp[x][y] == 0) continue;
                             //블록이 놓인 곳(stackIdx+1)의 정보
                             //1. 블록의 값이 0 => 이전에 과정에서 블록이 합쳐져서 생기는 상황
                             if (temp[x][stackIdx + 1] == 0) {
                                 //0인 곳으로 이동하는 개념
                                 temp[x][stackIdx + 1] = temp[x][y];
                                 temp[x][y] = 0;
-                                stackIdx--;
+                                //그냥 이동만 한 경우는 stackIdx 의 변화를 주면 안된다.
                             }
                             //2. 블록의 값이 움직이는 블록의 값과 다름
                             else if (temp[x][stackIdx + 1] != temp[x][y]) {
@@ -214,3 +203,8 @@ public class JUN12100_2048Easy {
         }
     }
 }
+
+/*
+반례
+https://www.acmicpc.net/board/view/61812
+ */
