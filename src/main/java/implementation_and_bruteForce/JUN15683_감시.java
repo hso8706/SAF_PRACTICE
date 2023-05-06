@@ -1,13 +1,26 @@
 package implementation_and_bruteForce;
 
+<<<<<<< HEAD
 import java.io.*;
 import java.util.StringTokenizer;
 
 public class JUN15683_감시 {
+=======
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.StringTokenizer;
+
+public class JUN15683_감시 {
+
+>>>>>>> 88600e0caaecfc033e39226f935f8800b94f7017
     static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
 
+<<<<<<< HEAD
     /*
     - 1,2,3,4,5 감시 카메라 존재
         - 각 감시 카메라는 감시할 수 있는 방향이 존재
@@ -52,17 +65,32 @@ public class JUN15683_감시 {
     static int cctvLastIdx;
     static int[] dx = new int[]{-1, 0, 1, 0};
     static int[] dy = new int[]{0, 1, 0, -1};
+=======
+    static int[] dx = new int[]{ -1, 0, 1, 0 };
+    static int[] dy = new int[]{ 0, 1, 0, -1 };
+
+    static int N, M;
+    static int[][] map;
+    /*
+    ### 감시
+    - 사각 지대의 최소 크기를 출력
+     */
+>>>>>>> 88600e0caaecfc033e39226f935f8800b94f7017
 
     public static void main(String[] args) throws IOException {
         st = new StringTokenizer(bf.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
         map = new int[N][M];
+<<<<<<< HEAD
         mapTemp = new int[N][M];
+=======
+>>>>>>> 88600e0caaecfc033e39226f935f8800b94f7017
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(bf.readLine());
             for (int j = 0; j < M; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
+<<<<<<< HEAD
                 if (map[i][j] != 0 && map[i][j] != 6) {
                     cctvs[cctvLastIdx] = new CctvInfo(i, j, map[i][j]);
                     cctvLastIdx++;
@@ -120,4 +148,12 @@ public class JUN15683_감시 {
             }
         }
     }
+=======
+            }
+        }
+
+
+    }
+
+>>>>>>> 88600e0caaecfc033e39226f935f8800b94f7017
 }
