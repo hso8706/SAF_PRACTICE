@@ -52,63 +52,38 @@ public class JUN14890_경사로 {
 
         //(가로줄==길)인 상황
         for (int i = 0; i < N; i++) {
+//            int cnt = 1;
             int cLevel = map[i][0]; // 현재 높이(시작점의 높이)
             boolean isPossible = true;
-            out: for (int j = 1; j < N; j++) { // 가로줄 하나 체크
+            out:
+            for (int j = 1; j < N; j++) {
                 //높이가 달라지는 경우 체크
                 //1) 높이가 높아지는 경우 => 현재 지점부터 이전으로 검사하여 경사로 놓을 수 있는 지 확인
-                if (map[i][j] - cLevel == 1) {
-                    int cnt = 1;
-                    int ni = i;
-                    int nj = j-1;
-                    int cCheck = map[ni][nj];
-                    if(runway[0][ni][nj]){
-                        isPossible = false;
-                        break out;
-                    }
-                    runway[0][ni][nj] = true;
-                    while (cnt < L) {
-                        nj -= 1;
-                        if (nj < 0 || cCheck != map[ni][nj] || runway[0][ni][nj]) {
-                            isPossible = false;
-                            break out;
-                        }
-                        runway[0][ni][nj] = true;
-                        cCheck = map[ni][nj];
-                        cnt++;
-                    }
-                    cLevel = map[i][j];
-                }
-                //2) 높이가 낮아지는 경우 => 다음 지점부터 다음으로 검사하여 경사로 놓을 수 있는 지 확인
-                else if (cLevel - map[i][j] == 1) {
+                if (cLevel < map[i][j]) {
                     int cnt = 1;
                     int ni = i;
                     int nj = j;
-                    int cCheck = map[ni][nj];
-                    if(runway[0][ni][nj]){
-                        isPossible = false;
-                        break out;
-                    }
-                    runway[0][ni][nj] = true;
+                    int cCheck = cLevel;
                     while (cnt < L) {
-                        nj += 1;
-                        if (nj >= N || cCheck != map[ni][nj] || runway[0][ni][nj]) {
+                        nj -= 1;
+                        if (nj < 0) {
                             isPossible = false;
                             break out;
                         }
-                        runway[0][ni][nj] = true;
-                        cCheck = map[ni][nj];
+                        if (cCheck != map[ni][nj]) {
+                            isPossible = false;
+                            break out;
+                        }
                         cnt++;
                     }
-                    cLevel = map[i][j];
+                }
+                //2) 높이가 낮아지는 경우 => 다음 지점부터 다음으로 검사하여 경사로 놓을 수 있는 지 확인
+                else if (cLevel > map[i][j]) {
+
                 }
                 //3) 높이가 같은 경우 cLevel 갱신
-                else if (cLevel == map[i][j]){
+                else {
                     cLevel = map[i][j];
-                }
-                else { // 4) 높이 차이가 2 이상 나는 경우
-                    isPossible = false;
-                    break out;
                 }
             }
             if (isPossible) {
@@ -117,66 +92,55 @@ public class JUN14890_경사로 {
         }
         //(세로줄==길)인 상황
         for (int i = 0; i < N; i++) {
+            int cnt = 1;
             int cLevel = map[0][i]; // 현재 높이(시작점의 높이)
             boolean isPossible = true;
-            out : for (int j = 1; j < N; j++) {
-                //높이가 달라지는 경우 체크
-                //1) 높이가 높아지는 경우 => 현재 지점부터 이전으로 검사하여 경사로 놓을 수 있는 지 확인
-                if (map[j][i] - cLevel == 1) {
-                    int cnt = 1;
-                    int ni = i;
-                    int nj = j-1;
-                    int cCheck = map[nj][ni];
-                    if(runway[1][nj][ni]){
-                        isPossible = false;
-                        break out;
-                    }
-                    runway[1][nj][ni] = true;
-                    while (cnt < L) {
-                        nj -= 1;
-                        if (nj < 0 || cCheck != map[nj][ni] || runway[1][nj][ni]) {
-                            isPossible = false;
-                            break out;
-                        }
-                        runway[1][nj][ni] = true;
-                        cCheck = map[nj][ni];
-                        cnt++;
-                    }
-                    cLevel = map[j][i];
+//            boolean up = false;
+//            boolean down = false;
+            for (int j = 1; j < N; j++) { // 하나의 길 체크, 1번부터 확인
+                //현재 높이와 높이가 같으면 패스 및 cnt 증가
+                if (cLevel == map[j][i]) {
+                    cnt++;
+//                    if (cnt >= L * 2) {
+//                        up = false;
+//                        down = false;
+//                    }
                 }
-                //2) 높이가 낮아지는 경우 => 다음 지점부터 다음으로 검사하여 경사로 놓을 수 있는 지 확인
-                else if (cLevel - map[j][i] == 1) {
-                    int cnt = 1;
-                    int ni = i;
-                    int nj = j;
-                    int cCheck = map[nj][ni];
-                    if(runway[1][nj][ni]){
-                        isPossible = false;
-                        break out;
-                    }
-                    runway[1][nj][ni] = true;
-                    while (cnt < L) {
-                        nj += 1;
-                        if (nj >= N || cCheck != map[nj][ni] || runway[1][nj][ni]) {
-                            isPossible = false;
-                            break out;
-                        }
-                        runway[1][nj][ni] = true;
-                        cCheck = map[nj][ni];
-                        cnt++;
-                    }
-                    cLevel = map[j][i];
+                //현재 높이와 높이 차이가 2 이상 나는 경우
+                else if (Math.abs(map[j][i] - cLevel) >= 2) {
+                    isPossible = false;//해당 길은 쓸모 없음
+                    break;
                 }
-                //3) 높이가 같은 경우 cLevel 갱신
-                else if (cLevel == map[j][i]){
-                    cLevel = map[j][i];
-                }
-                else { // 4) 높이 차이가 2 이상 나는 경우
-                    isPossible = false;
-                    break out;
+                //현재 높이와 높이 차이가 1인 경우, 현재 높이 갱신 및 cnt 체크
+                //현재 높이가 더 높은 경우, 낮은 경우 나눌것
+                else {
+                    if (cnt >= L) {
+                        cnt -= L;
+                    }
+//                    if (map[j][i] > cLevel) {
+//                        up = true;
+//                    } else {
+//                        down = true;
+//                    }
+//
+//                    if ((map[j][i] == high_col[i]) && L != 1) {
+//                        up = false;
+//                        down = false;
+//                    }
+
+                    if (cnt < L && cLevel != high_col[i]) {
+                        isPossible = false;//길이가 L보다 작은 경우 해당 길은 쓸모 없음
+                        break;
+                    }
+//                    if (up && down) {
+//                        isPossible = false;
+//                        break;
+//                    }
+                    cnt = 1; // cnt 초기화
+                    cLevel = map[j][i]; // 현재 높이 갱신
                 }
             }
-            if (isPossible) {
+            if ((isPossible && cLevel == high_col[i]) || (isPossible && cnt >= L)) {
                 possible++;
             }
         }
