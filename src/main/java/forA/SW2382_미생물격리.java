@@ -3,7 +3,7 @@ package forA;
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class SW2382 {
+public class SW2382_미생물격리 {
     static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
