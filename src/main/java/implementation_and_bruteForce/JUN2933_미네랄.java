@@ -103,6 +103,54 @@ public class JUN2933_미네랄 {
     }
 
     private static void falldown() {
+        //visited 가 true 인 곳이 뷰유하는 클러스터가 있는 곳
+        //클러스터 자체를 통째로 걸릴때까지 움직여줄 것
+
+        //구간 복사
+        int l = C-1;
+        int r = 0;
+//        int[] lowest = new int[C];
+        for (int i = 0; i < R; i++) {
+            for (int j = 0; j < C; j++) {
+                if(visited[i][j]){
+                    l = Math.min(l, j);
+                    r = Math.max(r, j);
+//                    lowest[j] = Math.max(lowest[j], i); // 클러스터 구간 내 최하단 값
+                }
+            }
+        }
+        while(true) {
+            char[][] temp = new char[R][C];
+            for (int i = 0; i < R; i++) {
+                for (int j = 0; j < C; j++) {
+                    temp[i][j] = map[i][j];
+                }
+            }
+            boolean flag = true;
+            for (int j = l; j <= r; j++) {
+                for (int i = R - 2; i >= 0; i--) {
+                    if (visited[i][j]) {
+                        if (temp[i + 1][j] != 'x') {
+                            temp[i + 1][j] = temp[i][j];
+                            temp[i][j] = '.';
+                            visited[i+1][j] = true;
+                            visited[i][j] = false;
+                        }
+                        else {
+                            flag = false;
+                        }
+                    }
+                }
+            }
+            if(flag){
+                for (int i = 0; i < R; i++) {
+                    for (int j = 0; j < C; j++) {
+                        map[i][j] = temp[i][j];
+                    }
+                }
+            }
+            else break;
+        }
     }
 
     private static boolean isFloated(int x, int y) {

@@ -76,22 +76,44 @@ public class JUN2931_가스관 {
                 map[i][j] = temp[j];
             }
         }
-        // 첫 진행 방향 정하기
-        for (int i = 0; i < 4; i++) {
-            int nx = M.x + dx[i];
-            int ny = M.y + dy[i];
-            if(nx<0 || ny<0 || nx>=R || ny>=C || map[nx][ny] == '.')continue;
-            if(i == 0 && (map[nx][ny] == '-' || map[nx][ny] == '2' || map[nx][ny] == '3')) continue;
-            else if(i == 1 && (map[nx][ny] == '|' || map[nx][ny] == '1' || map[nx][ny] == '2')) continue;
-            else if(i == 2 && (map[nx][ny] == '-' || map[nx][ny] == '1' || map[nx][ny] == '4')) continue;
-            else if(i == 3 && (map[nx][ny] == '|' || map[nx][ny] == '3' || map[nx][ny] == '4')) continue;
-            M = new Pair(M.x, M.y, i);
-            break;
+        if( R == 1){
+            for (int i = 0; i < C; i++) {
+                if(map[0][i] == '.') bw.write(0 + " " + i + " -");
+            }
         }
+        else if( C == 1){
+            for (int i = 0; i < R; i++) {
+                if(map[i][0] == '.') bw.write(i + " " + 0 + " |");
+            }
+        }
+        else{
+            // 첫 진행 방향 정하기
+            for (int i = 0; i < 4; i++) {
+                int nx = M.x + dx[i];
+                int ny = M.y + dy[i];
+                if (nx < 0 || ny < 0 || nx >= R || ny >= C || map[nx][ny] == '.' || map[nx][ny] == 'Z') {
+                    continue;
+                }
+                if (i == 0 && (map[nx][ny] == '-' || map[nx][ny] == '2' || map[nx][ny] == '3')) {
+                    continue;
+                } else if (i == 1 && (map[nx][ny] == '|' || map[nx][ny] == '1'
+                        || map[nx][ny] == '2')) {
+                    continue;
+                } else if (i == 2 && (map[nx][ny] == '-' || map[nx][ny] == '1'
+                        || map[nx][ny] == '4')) {
+                    continue;
+                } else if (i == 3 && (map[nx][ny] == '|' || map[nx][ny] == '3'
+                        || map[nx][ny] == '4')) {
+                    continue;
+                }
+                M = new Pair(M.x, M.y, i);
+                break;
+            }
 
-        // M 좌표에서 bfs 시작
-        visited = new boolean[R][C];
-        bfs();
+            // M 좌표에서 bfs 시작
+            visited = new boolean[R][C];
+            bfs();
+        }
         bw.flush();
         bw.close();
     }
@@ -106,18 +128,19 @@ public class JUN2931_가스관 {
             int cy = current.y;
             int cd = current.d;
 
-            // '|'인 블록이 '+'인지 확인하고 진행
-            if (map[cx][cy] == '|') {
-                for (int j = 0; j < crossList.size(); j++) {
-                    if (cx == crossList.get(j).x && cy == crossList.get(j).y) { //크로스인 경우 자리 이동 후 가로로 전환
-                        map[cx][cy] = '-';
-                    }
-                }
-            }
 
             int nx = cx + dx[cd];
             int ny = cy + dy[cd];
             int nd = cd;
+
+            // '|'인 블록이 '+'인지 확인하고 진행
+            if (map[nx][ny] == '|') {
+                for (int j = 0; j < crossList.size(); j++) {
+                    if (nx == crossList.get(j).x && ny == crossList.get(j).y) { //크로스인 경우 자리 이동 후 가로로 전환
+                        map[nx][ny] = '-';
+                    }
+                }
+            }
 
             switch (map[nx][ny]) {
                 case '1':
@@ -139,7 +162,12 @@ public class JUN2931_가스관 {
                         int nnx = nx + dx[i];
                         int nny = ny + dy[i];
                         if(nnx == nx && nny == ny) continue;
-                        if(nnx<0 || nny<0 || nnx>=R || nny>=C || map[nnx][nny] == '.')continue;
+                        if(nnx<0 || nny<0 || nnx>=R || nny>=C || map[nnx][nny] == '.' || map[nnx][nny] == 'M' || map[nnx][nny] == 'Z')continue;
+                        for (int j = 0; j < crossList.size(); j++) {
+                            if (nnx == crossList.get(j).x && nny == crossList.get(j).y) { //크로스인 경우 자리 이동 후 가로로 전환
+                                check[i] = true;
+                            }
+                        }
                         if(i == 0 && (map[nnx][nny] == '-' || map[nnx][nny] == '2' || map[nnx][nny] == '3')) continue;
                         else if(i == 1 && (map[nnx][nny] == '|' || map[nnx][nny] == '1' || map[nnx][nny] == '2')) continue;
                         else if(i == 2 && (map[nnx][nny] == '-' || map[nnx][nny] == '1' || map[nnx][nny] == '4')) continue;
