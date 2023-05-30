@@ -19,6 +19,7 @@ public class Solution {
     static int max;
 
     public static void main(String[] args) throws NumberFormatException, IOException {
+        long start = System.currentTimeMillis();
         int T = Integer.parseInt(bf.readLine());
 
         for (int t = 1; t < T + 1; t++) {
@@ -37,9 +38,10 @@ public class Solution {
             dfs(0, 0);
             bw.write(max + "\n");
         }
+        long end = System.currentTimeMillis();
+        bw.write((end - start) + "\n");
         bw.flush();
         bw.close();
-
     }
 
     private static void dfs(int count, int sum) {
@@ -47,13 +49,13 @@ public class Solution {
             max = Math.max(max, sum);
             return;
         }
-
+        //visit 를 활용하여 터뜨리는 풍선의 순서(idx)를 정함
         for (int i = 0; i < n; i++) {
             if (visit[i]) {
                 continue;
             }
             visit[i] = true;
-            dfs(count + 1, sum + findScore(i));
+            dfs(count + 1, sum + findScore(i)); // 풍선을 터뜨리며 계산될 점수를 누적으로 넘김
             visit[i] = false;
         }
     }

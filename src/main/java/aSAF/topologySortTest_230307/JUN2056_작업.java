@@ -26,7 +26,7 @@ public class JUN2056_작업 {
         inDegree = new int[N+1];
         time = new int[N+1];
 
-        int amount, to;
+        int amount, from;
         for (int i = 1; i < N+1; i++) {
             adjList[i] = new ArrayList<>();
 
@@ -35,8 +35,8 @@ public class JUN2056_작업 {
             amount = Integer.parseInt(st.nextToken());
             if(amount != 0){
                 for (int j = 0; j < amount; j++) {
-                    to = Integer.parseInt(st.nextToken());
-                    adjList[to].add(i);
+                    from = Integer.parseInt(st.nextToken());
+                    adjList[from].add(i);
                     inDegree[i]++;
                 }
             }

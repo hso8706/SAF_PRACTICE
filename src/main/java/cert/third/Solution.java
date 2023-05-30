@@ -5,10 +5,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Solution {
+
     static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
@@ -44,31 +47,105 @@ public class Solution {
          - 종속 관계에 대한 리스트를 따로 구현해서 순서를 먼저 확인
     - 우선 입력을 위한 배열 별도 생성하고, 정렬을 이후에 진행
     
-    ### 풀이3.
+    ### 풀이3. =>위상정렬 해결
     - 위상정렬 공부
     - 위상정렬 사용
     - 김수석 해결
-        -
+        - 모든 업무에 대해서 줄여보기 => 성공
+        - 최종 시간이 가장 긴 라인(?)에 대해서 다루기
      */
     static int T, N;
+    static ArrayList<Integer>[] adjList;//인접 리스트
+    static int[] inDegree;//인접 차수
+    static int[] tempDegree;//김수석 완탐 때 사용할 클론 차수
+    static int[] time;//업무별 시간 배열
+    static int minValue;
+
     public static void main(String[] args) throws IOException {
         T = Integer.parseInt(bf.readLine());
-        for (int t = 1; t < T+1; t++) {
-            bw.write("#"+t+" ");
+        for (int t = 1; t < T + 1; t++) {
+            bw.write("#" + t + " ");
 
             N = Integer.parseInt(bf.readLine());
+
+            adjList = new ArrayList[N + 1];
+            inDegree = new int[N + 1];
+            tempDegree = new int[N + 1];
+            time = new int[N + 1];
+            minValue = Integer.MAX_VALUE;
             for (int i = 1; i < N+1; i++) {
+                adjList[i] = new ArrayList<>(); //빈 리스트 생성
+            }
+
+            //시간, 선행 업무 수, 선행 업무 번호
+            int tTime, amount, from;
+            for (int i = 1; i < N + 1; i++) { // i가 to의 개념
                 st = new StringTokenizer(bf.readLine());
-                int time = Integer.parseInt(st.nextToken());
-                int check = Integer.parseInt(st.nextToken());
-                ArrayList<Integer> depN = new ArrayList<>();
-                if(check != 0){
-                    depN.add(check);
-                    while(st.hasMoreTokens()){
-                        depN.add(Integer.parseInt(st.nextToken()));
+
+                tTime = Integer.parseInt(st.nextToken());
+                amount = Integer.parseInt(st.nextToken());
+                //시간
+                time[i] = tTime;
+                //선행 업무
+                if(amount != 0){
+                    for (int j = 0; j < amount; j++) {
+                        from = Integer.parseInt(st.nextToken());
+                        adjList[from].add(i);//from 해결
+                        inDegree[i]++; //인접 차수 해결
                     }
                 }
             }
+
+            //김수석 완탐
+            for (int i = 1; i < N+1; i++) {
+                int temp = time[i];
+                time[i] = (int)(time[i]/2);
+                for (int j = 1; j < N+1; j++) tempDegree[j] = inDegree[j];
+                int tempValue = topologySort();
+                if(tempValue != -1) minValue = Math.min(minValue, tempValue);
+                time[i] = temp;
+            }
+            if(minValue == Integer.MAX_VALUE) bw.write(-1+"\n");
+            else bw.write(minValue+"\n");
         }
+        bw.flush();
+        bw.close();
+    }
+
+    private static int topologySort() {
+        int[] result = new int[N+1];
+        boolean[] isCycle = new boolean[N+1];
+
+        Queue<Integer> queue = new ArrayDeque<>();
+        for (int i = 1; i < N+1; i++) {
+            result[i] = time[i];
+            // 인접(진입) 차수가 0이면 해당 vertex(to)를 queue 에 제공
+            if(tempDegree[i] == 0) queue.offer(i);
+        }
+
+        //queue 가 빌 때까지 작업
+        while(!queue.isEmpty()){
+            int current = queue.poll(); // to의 값이 꺼내짐
+            isCycle[current] = true;
+            for (int next : adjList[current]){
+                result[next] = Math.max(result[next], (time[next] + result[current]));
+                tempDegree[next]--; //현재 조회된 노드의 다음 노드의 진입 차수
+                if(tempDegree[next] == 0){ //다음 노드 진입 차수를 1 감소시켰을때, 0이면 queue 넣음
+                    queue.offer(next);
+                }
+            }
+
+        }
+        //TODO cycle 조건 해결 필요
+        int max = 0;
+        boolean flag = false;
+        for (int i = 1; i < N+1; i++) {
+            if(!isCycle[i]) flag = true;
+            max = Math.max(max,result[i]);
+        }
+
+        if(flag) return -1;
+        else return max;
     }
 }
+

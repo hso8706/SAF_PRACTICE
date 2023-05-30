@@ -23,7 +23,7 @@ public class Jun14567_선수과목 {
      */
     static int N, M;
     static ArrayList<Integer>[] adjList;
-    static int[] isDegree, reDegree, result;
+    static int[] isDegree, result;
 
     public static void main(String[] args) throws IOException {
         st = new StringTokenizer(bf.readLine());
@@ -31,7 +31,6 @@ public class Jun14567_선수과목 {
         M = Integer.parseInt(st.nextToken());
         adjList = new ArrayList[N+1];
         isDegree = new int[N+1];
-        reDegree = new int[N+1];
         result = new int[N+1];
         for (int i = 1; i < N+1; i++) {
             adjList[i] = new ArrayList<>();
@@ -40,12 +39,14 @@ public class Jun14567_선수과목 {
             st = new StringTokenizer(bf.readLine());
             int from = Integer.parseInt(st.nextToken());
             int to = Integer.parseInt(st.nextToken());
-            adjList[to].add(from);
+            adjList[from].add(to);
             isDegree[to]++;
-            reDegree[to]++;
         }
         
         tplSort();
+        for (int i = 1; i < N+1; i++) {
+            bw.write(result[i] + " ");
+        }
         bw.flush();
         bw.close();
 
@@ -53,19 +54,21 @@ public class Jun14567_선수과목 {
 
     private static void tplSort() throws IOException {
 
-        Queue<Integer> queue = new ArrayDeque<>();
+        Queue<int[]> queue = new ArrayDeque<>(); // [0]: from, [1]: depth
         for (int i = 1; i < N+1; i++) {
-            if(isDegree[i] == 0) queue.offer(i);
+            if(isDegree[i] == 0) queue.offer(new int[]{i,1});
         }
 
         while(!queue.isEmpty()){
-            int cur = queue.poll();
-            bw.write((reDegree[cur]+1) + " ");
+            int[] cur = queue.poll();
+            int from = cur[0];
+            int depth = cur[1];
+            result[from] = depth;
 
             //인접 처리
-            for(int vertex : adjList[cur]){
+            for(int vertex : adjList[from]){
                 isDegree[vertex]--;
-                if(isDegree[vertex] == 0) queue.offer(vertex);
+                if(isDegree[vertex] == 0) queue.offer(new int[]{vertex, depth+1});
             }
         }
     }
