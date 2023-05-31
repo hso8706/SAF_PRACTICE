@@ -19,7 +19,6 @@ public class Solution {
     static int max;
 
     public static void main(String[] args) throws NumberFormatException, IOException {
-        long start = System.currentTimeMillis();
         int T = Integer.parseInt(bf.readLine());
 
         for (int t = 1; t < T + 1; t++) {
@@ -38,8 +37,6 @@ public class Solution {
             dfs(0, 0);
             bw.write(max + "\n");
         }
-        long end = System.currentTimeMillis();
-        bw.write((end - start) + "\n");
         bw.flush();
         bw.close();
     }

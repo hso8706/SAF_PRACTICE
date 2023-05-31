@@ -5,10 +5,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class Solution {
+public class Solution_1T {
 
     static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -52,7 +51,6 @@ public class Solution {
     static int[] dx = { -1, 0, 1, 0 }; //북,동,남,서 => 방향+1을 시작으로, -1씩 감소하여 순회
     static int[] dy = { 0, 1, 0, -1 };
     static int maxValue;
-    static ArrayList<int[]> plants;
 
     public static void main(String[] args) throws IOException {
         T = Integer.parseInt(bf.readLine());
@@ -86,7 +84,6 @@ public class Solution {
                     for (int d = 0; d < 4; d++) {
                         copyMap();
                         count = new int[N][N]; // 심은 횟수 카운트
-                        plants = new ArrayList<>();
                         dfs(i, j, d, 0, 1);//시작점과 방향, 수확 cnt, 날짜 cnt
                     }
                 }
@@ -112,7 +109,6 @@ public class Solution {
             return;
         }
 
-        if(day>=2) growUp();
         //가능한 길 탐색
         int flag = 0;
         int nd = cd + 1; // 다음 방향, 우측부터
@@ -124,7 +120,7 @@ public class Solution {
             //다음 갈 위치
             int nx = cx + dx[nd];
             int ny = cy + dy[nd];
-            if (nx <= 0 || ny <= 0 || nx >= N - 1 || ny >= N - 1 || temp[nx][ny] == -1 || ( temp[nx][ny] >= 1 && temp[nx][ny] < 4+count[nx][ny])) { // 못가는 경우
+            if (temp[nx][ny] == -1 || temp[nx][ny] > day) { // 못가는 경우
                 nd--; //다음 방향 탐색: 왼쪽으로 회전
                 if (nd == -1) {
                     nd = 3;
@@ -138,34 +134,17 @@ public class Solution {
             }
             //갈 수 있는 경우(다음 농지가 빈 농지 혹은 곡물)
             //현재 위치 지형에 따라 다른 작업 실시
-            if (temp[cx][cy] == 4+count[cx][cy]) { // 곡식인 경우
+            if (temp[cx][cy] > 0) { // 곡식인 경우
                 temp[cx][cy] = 0; // 수확 후 제거
-                for (int i = 0; i < plants.size(); i++) {
-                    if (plants.get(i)[0] == cx && plants.get(i)[1] == cy) {
-                        plants.remove(i);
-                    }
-                }
                 dfs(nx, ny, nd, cnt + 1, day + 1);
                 return;
             } else {
-//                temp[cx][cy] = 1; //다음 위치 가기전 씨앗 심기
                 count[cx][cy]++;//심은 횟수 카운트
-                plants.add(new int[]{ cx, cy }); //plants 에 좌표 저장
+                temp[cx][cy] = 4 + day + count[cx][cy]; //다음 위치 가기전 씨앗 심기
                 dfs(nx, ny, nd, cnt, day + 1);
                 return;
             }
 
-        }
-    }
-
-    private static void growUp() {
-        //plants 성장
-        for (int[] plant : plants) {
-            int px = plant[0];
-            int py = plant[1];
-            if (temp[px][py] < 4 + count[px][py]) {
-                temp[px][py]++;
-            }
         }
     }
 }
