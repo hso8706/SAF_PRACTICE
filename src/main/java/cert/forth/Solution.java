@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Solution {
+
     static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
@@ -40,48 +41,54 @@ public class Solution {
      */
 
     /*
-    - map: 산을 -1로 입력받기, N*N
-    - visited: 매 상황마다 새로 생성 => 따로 필요없을지도 모르겠다.
-    - dfs
-        - 재귀를 사용하므로 robo class는 따로 불필요
-
     - 씨: 1
     - 싹: 2, 3, 4
     - 곡식: 5
+    => 5 + count
      */
     static int T, N, M;
-    static int[][] map;
+    static int[][] map, count;
     static int[][] temp;
-    static int[] dx = {-1,0,1,0}; //북,동,남,서 => 방향+1을 시작으로, -1씩 감소하여 순회
-    static int[] dy = {0,1,0,-1};
+    static int[] dx = { -1, 0, 1, 0 }; //북,동,남,서 => 방향+1을 시작으로, -1씩 감소하여 순회
+    static int[] dy = { 0, 1, 0, -1 };
     static int maxValue;
     static ArrayList<int[]> plants;
+
     public static void main(String[] args) throws IOException {
         T = Integer.parseInt(bf.readLine());
-        for (int t = 1; t < T+1; t++) {
-            bw.write("#"+t+" ");
+        for (int t = 1; t < T + 1; t++) {
+            bw.write("#" + t + " ");
 
             st = new StringTokenizer(bf.readLine());
             N = Integer.parseInt(st.nextToken());
             M = Integer.parseInt(st.nextToken());
             maxValue = 0;
             map = new int[N][N];
+//            count = new int[N][N];
+            temp = new int[N][N];
             for (int i = 0; i < N; i++) {
                 st = new StringTokenizer(bf.readLine());
                 for (int j = 0; j < N; j++) {
                     int temp = Integer.parseInt(st.nextToken());
-                    if(temp == 1) map[i][j] = -1;
-                    else map[i][j] = 0;
+                    if (temp == 1) {
+                        map[i][j] = -1;
+                    } else {
+                        map[i][j] = 0;
+                    }
                 }
             }
             //완전 탐색 => 테두리 제외
-            for (int i = 1; i < N-1; i++) {
-                for (int j = 1; j < N-1; j++) {
-                    if(map[i][j] == -1) continue;
+            for (int i = 1; i < N - 1; i++) {
+                for (int j = 1; j < N - 1; j++) {
+                    if (map[i][j] == -1) {
+                        continue;
+                    }
                     for (int d = 0; d < 4; d++) {
                         copyMap();
+                        count = new int[N][N];
+//                        defaultCount();
                         plants = new ArrayList<>();
-                        dfs(i,j,d,0,1);//시작점과 방향, 수확 cnt, 날짜 cnt
+                        dfs(i, j, d, 0, 1);//시작점과 방향, 수확 cnt, 날짜 cnt
                     }
                 }
             }
@@ -91,8 +98,15 @@ public class Solution {
         bw.close();
     }
 
+//    private static void defaultCount() {
+//        for (int i = 0; i < N; i++) {
+//            for (int j = 0; j < N; j++) {
+//                count[i][j] = -1;
+//            }
+//        }
+//    }
+
     private static void copyMap() {
-        temp = new int[N][N];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 temp[i][j] = map[i][j];
@@ -102,7 +116,7 @@ public class Solution {
 
     private static void dfs(int cx, int cy, int cd, int cnt, int day) {
         //day == M+1 종료, 그 전까지는 갈 길이 없더라도 진행
-        if(day == M+1){
+        if (day == M + 1) {
             maxValue = Math.max(maxValue, cnt);
             return;
         }
@@ -111,47 +125,56 @@ public class Solution {
         //가능한 길 탐색
         int flag = 0;
         int nd = cd + 1; // 다음 방향, 우측부터
-        if(nd == 4) nd = 0;
-        while(flag<4){// 4방 순회
+        if (nd == 4) {
+            nd = 0;
+        }
+        while (true) {// 4방 순회
             flag++;
             //다음 갈 위치
             int nx = cx + dx[nd];
             int ny = cy + dy[nd];
-            if(nx<=0 || ny<=0 || nx>=N-1 || ny>=N-1 || temp[nx][ny] == -1 || (temp[nx][ny] >= 1 && temp[nx][ny] <= 4)) { // 못가는 경우
+            if (nx <= 0 || ny <= 0 || nx >= N - 1 || ny >= N - 1 || temp[nx][ny] == -1 || ( temp[nx][ny] >= 1 && temp[nx][ny] < 4+count[nx][ny])) { // 못가는 경우
                 nd--; //다음 방향 탐색: 왼쪽으로 회전
-                if(nd == -1) nd = 3;
+                if (nd == -1) {
+                    nd = 3;
+                }
                 //더 이상 이동할 수 없는 경우
-                if(flag >= 4){
-                    dfs(cx, cy, cd, cnt, day+1);
+                if (flag >= 4) {
+                    dfs(cx, cy, cd, cnt, day + 1);
                     return;
                 }
                 continue;
             }
             //갈 수 있는 경우(다음 농지가 빈 농지 혹은 곡물)
             //현재 위치 지형에 따라 다른 작업 실시
-            if(temp[cx][cy] == 5){ // 곡식인 경우
+            if (temp[cx][cy] == 4+count[cx][cy]) { // 곡식인 경우
                 temp[cx][cy] = 0; // 수확 후 제거
                 for (int i = 0; i < plants.size(); i++) {
-                    if(plants.get(i)[0] == cx && plants.get(i)[1] == cy) plants.remove(i);
+                    if (plants.get(i)[0] == cx && plants.get(i)[1] == cy) {
+                        plants.remove(i);
+                    }
                 }
-                dfs(nx, ny, nd, cnt+1, day+1);
+                dfs(nx, ny, nd, cnt + 1, day + 1);
                 return;
-            }
-            else {
+            } else {
                 temp[cx][cy] = 1; //다음 위치 가기전 씨앗 심기
-                plants.add(new int[]{cx, cy}); //plants 에 좌표 저장
-                dfs(nx, ny, nd, cnt, day+1);
+                count[cx][cy]++;//심은 횟수 카운트
+                plants.add(new int[]{ cx, cy }); //plants 에 좌표 저장
+                dfs(nx, ny, nd, cnt, day + 1);
                 return;
             }
+
         }
     }
 
     private static void growUp() {
         //plants 성장
-        for(int[] plant: plants){
+        for (int[] plant : plants) {
             int px = plant[0];
             int py = plant[1];
-            if(temp[px][py] < 5) temp[px][py]++;
+            if (temp[px][py] < 4 + count[px][py]) {
+                temp[px][py]++;
+            }
         }
     }
 }

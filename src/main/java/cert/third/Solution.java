@@ -54,6 +54,15 @@ public class Solution {
         - 모든 업무에 대해서 줄여보기 => 성공
         - 최종 시간이 가장 긴 라인(?)에 대해서 다루기
      */
+
+    /*
+    ### 위상정렬을 사용한 시간 문제 정리
+    - 선언 및 초기화
+        - 인접리스트: ArrayList<Integer>[], 배열 인덱스는 from 이나 to 중 하나를 선택, 나는 from 으로 선택, 내용에는 to에 해당하는 값을 넣어줌
+        - 인접 차수 배열: int[], vertex 수 만큼(혹은 +1)의 길이를 설정하고 to에 해당하는 인덱스를 ++함. => 해당 vertex(to)로 들어오는 간선의 수를 나타냄
+        - 시간 배열: int[], 업무별 시간을 저장할 배열을 설정
+        - 클론 차수 배열: 인접 차수 배열을 로직 처리시 변화가 생김, 여러번의 반복을 사용하기 위해 클론 배열 사용
+     */
     static int T, N;
     static ArrayList<Integer>[] adjList;//인접 리스트
     static int[] inDegree;//인접 차수
@@ -68,10 +77,10 @@ public class Solution {
 
             N = Integer.parseInt(bf.readLine());
 
-            adjList = new ArrayList[N + 1];
-            inDegree = new int[N + 1];
-            tempDegree = new int[N + 1];
-            time = new int[N + 1];
+            adjList = new ArrayList[N + 1]; //1부터 시작
+            inDegree = new int[N + 1]; // 인접 차수 배열
+            tempDegree = new int[N + 1]; // 클론 인접 차수 배열
+            time = new int[N + 1]; // 업무 시간
             minValue = Integer.MAX_VALUE;
             for (int i = 1; i < N+1; i++) {
                 adjList[i] = new ArrayList<>(); //빈 리스트 생성
@@ -87,23 +96,23 @@ public class Solution {
                 //시간
                 time[i] = tTime;
                 //선행 업무
-                if(amount != 0){
+                if(amount != 0){//
                     for (int j = 0; j < amount; j++) {
                         from = Integer.parseInt(st.nextToken());
-                        adjList[from].add(i);//from 해결
-                        inDegree[i]++; //인접 차수 해결
+                        adjList[from].add(i);//from 인덱스에 접근하여 내부를 순회하며 어떤 to 업무가 있는지 확인할 예쩡
+                        inDegree[i]++; //인접 차수 해결, to 인덱스를 주의
                     }
                 }
             }
 
-            //김수석 완탐
+            //김수석 완탐 => 모든 업무를 하나씩 반절 줄여가며 확인
             for (int i = 1; i < N+1; i++) {
-                int temp = time[i];
-                time[i] = (int)(time[i]/2);
-                for (int j = 1; j < N+1; j++) tempDegree[j] = inDegree[j];
-                int tempValue = topologySort();
-                if(tempValue != -1) minValue = Math.min(minValue, tempValue);
-                time[i] = temp;
+                int temp = time[i]; // 백트래킹을 위한 임시 저장
+                time[i] = (int)(time[i]/2); // 김수석이 도와주는 업무
+                for (int j = 1; j < N+1; j++) tempDegree[j] = inDegree[j]; // clone
+                int tempValue = topologySort(); // 로직 처리
+                if(tempValue != -1) minValue = Math.min(minValue, tempValue); // 로직 처리 결과에 따른 처리
+                time[i] = temp; // 백트래킹
             }
             if(minValue == Integer.MAX_VALUE) bw.write(-1+"\n");
             else bw.write(minValue+"\n");
@@ -113,39 +122,39 @@ public class Solution {
     }
 
     private static int topologySort() {
-        int[] result = new int[N+1];
-        boolean[] isCycle = new boolean[N+1];
+        int[] result = new int[N+1]; // 누적되는 업무 시간을 저장할 배열
+        boolean[] isCycle = new boolean[N+1]; // cycle 유무를 확인할 배열
+        //TODO cycle 이 있으면 그냥 붕괴해도 되나?
 
-        Queue<Integer> queue = new ArrayDeque<>();
+        Queue<Integer> queue = new ArrayDeque<>(); // 인접 차수가 0, 즉 선행 업무가 없는 시작점을 넣을 queue
         for (int i = 1; i < N+1; i++) {
-            result[i] = time[i];
-            // 인접(진입) 차수가 0이면 해당 vertex(to)를 queue 에 제공
+            result[i] = time[i]; // 누적 시간 배열 초기화
+            // 인접(진입) 차수가 0이면 해당 vertex 를 queue 에 제공
             if(tempDegree[i] == 0) queue.offer(i);
         }
 
         //queue 가 빌 때까지 작업
         while(!queue.isEmpty()){
-            int current = queue.poll(); // to의 값이 꺼내짐
-            isCycle[current] = true;
-            for (int next : adjList[current]){
-                result[next] = Math.max(result[next], (time[next] + result[current]));
-                tempDegree[next]--; //현재 조회된 노드의 다음 노드의 진입 차수
-                if(tempDegree[next] == 0){ //다음 노드 진입 차수를 1 감소시켰을때, 0이면 queue 넣음
+            int current = queue.poll(); // from 값이 꺼내짐
+            isCycle[current] = true; // cycle 이 없다면 모든 배열의 요소가 true 로 바뀌게 설정
+            for (int next : adjList[current]){ // from 에서 시작되는 to 를 순회
+                result[next] = Math.max(result[next], (time[next] + result[current])); // 시간 누적 로직: to(next)인덱스의 값을 확인, 현재 꺼내진 from(current)에 누적된 값과 이후 더해질 next(to)의 값을 더하고 확인
+                tempDegree[next]--; //현재 조회된 노드의 다음 노드의 진입 차수 감소(간선 제거)
+                if(tempDegree[next] == 0){ //다음 노드 진입 차수를 감소시켰을때, 0이면 queue 넣음
                     queue.offer(next);
                 }
             }
-
         }
-        //TODO cycle 조건 해결 필요
+
         int max = 0;
         boolean flag = false;
         for (int i = 1; i < N+1; i++) {
-            if(!isCycle[i]) flag = true;
-            max = Math.max(max,result[i]);
+            if(!isCycle[i]) flag = true; // cycle 확인 배열의 모든 값이 true 인지 확인
+            max = Math.max(max,result[i]); // 누적된 시간 배열 중 가장 큰 값 반환
         }
 
-        if(flag) return -1;
-        else return max;
+        if(flag) return -1; // cycle 이 있다면 -1 반환
+        else return max; // cycle 이 없다면 최대 시간 누적 값 반환
     }
 }
 

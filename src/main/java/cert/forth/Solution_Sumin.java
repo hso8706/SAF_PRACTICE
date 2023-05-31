@@ -11,7 +11,7 @@ public class Solution_Sumin {
     static int[][][] arr;
 
     public static void main(String[] args) throws IOException {
-        System.setIn(new FileInputStream("testcase/test4.txt")); //주석
+//        System.setIn(new FileInputStream("testcase/test4.txt")); //주석
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
