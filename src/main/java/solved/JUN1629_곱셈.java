@@ -1,4 +1,4 @@
-package solving;
+package solved;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,5 +34,4 @@ public class JUN1629_곱셈 {
         if(B%2 == 0) return result * result % C;
         else return (result * result % C) * A % C;
     }
-
 }
