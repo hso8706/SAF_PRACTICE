@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class JUN1766_문제집 {
@@ -45,50 +46,70 @@ public class JUN1766_문제집 {
             st = new StringTokenizer(bf.readLine());
             int from = Integer.parseInt(st.nextToken());
             int to = Integer.parseInt(st.nextToken());
-            adjList[to].add(from);
-            inDegree[from]++;
+            adjList[from].add(to);
+            inDegree[to]++;
         }
 
-        ArrayDeque<Integer>[] results = topologySort();
-        for (int i = 1; i < N+1; i++) {
-            if(results[i].isEmpty()) continue;
-            while(!results[i].isEmpty()){
-                bw.write(results[i].pollFirst()+" ");
-            }
-        }
+//        ArrayDeque<Integer>[] results = topologySort();
+//        for (int i = 1; i < N+1; i++) {
+//            if(results[i].isEmpty()) continue;
+//            while(!results[i].isEmpty()){
+//                bw.write(results[i].pollFirst()+" ");
+//            }
+//        }
+        topologySort();
+
         bw.flush();
         bw.close();
     }
 
-    private static ArrayDeque<Integer>[] topologySort() {
-        ArrayDeque<Integer>[] results = new ArrayDeque[N+1];
+    private static void topologySort() throws IOException {
+//        ArrayDeque<Integer>[] results = new ArrayDeque[N+1];
+//        for (int i = 1; i < N+1; i++) {
+//            results[i] = new ArrayDeque<>();
+//        }
+//        int idx = 1;
+//        ArrayDeque<int[]> queue = new ArrayDeque<>();
+//        for (int i = 1; i < N+1; i++) {
+//            if(inDegree[i]==0) {
+//                queue.offer(new int[]{i, idx});
+//                results[idx].offerFirst(i);
+//                idx++;
+//            }
+//        }
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
         for (int i = 1; i < N+1; i++) {
-            results[i] = new ArrayDeque<>();
-        }
-        int idx = 1;
-        ArrayDeque<int[]> queue = new ArrayDeque<>();
-        for (int i = 1; i < N+1; i++) {
-            if(inDegree[i]==0) {
-                queue.offer(new int[]{i, idx});
-                results[idx].offerFirst(i);
-                idx++;
+            if(inDegree[i]==0){
+                pq.offer(i);
             }
         }
 
-        while(!queue.isEmpty()){
-            int[] current = queue.poll();
-            int cVertex = current[0];
-            int cIdx = current[1];
+        while(!pq.isEmpty()){
+            int current = pq.poll();
+            bw.write(current+" ");
 
-            for (int before: adjList[cVertex]){
-                inDegree[before]--;
-                if(inDegree[before]==0) {
-                    queue.offer(new int[]{before, cIdx});
-                    results[cIdx].offerFirst(before);
+            for (int next: adjList[current]){
+                inDegree[next]--;
+                if(inDegree[next]==0) {
+                    pq.offer(next);
                 }
             }
         }
 
-        return results;
+//        while(!queue.isEmpty()){
+//            int[] current = queue.poll();
+//            int cVertex = current[0];
+//            int cIdx = current[1];
+//
+//            for (int before: adjList[cVertex]){
+//                inDegree[before]--;
+//                if(inDegree[before]==0) {
+//                    queue.offer(new int[]{before, cIdx});
+//                    results[cIdx].offerFirst(before);
+//                }
+//            }
+//        }
+
+//        return results;
     }
 }
