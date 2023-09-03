@@ -1,13 +1,10 @@
 package implementation_and_bruteForce;
 
-import implementation_and_bruteForce.JUN2589_보물섬.Pair;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.StringTokenizer;
 
 public class JUN2115_갤러리 {
@@ -22,15 +19,16 @@ public class JUN2115_갤러리 {
     - 벽 X, 빈 .
 
     ### 해결 방법 1
-    - 빈 공간을 탐색
-    - 빈 공간의 4방을 탐색하여 빈 공간과 맞닿은 벽 true 체크
-    - true 의 길이를 수학적으로 로직을 만들어서 최대 개수 파악
+    - 완전 탐색 실시(가로, 세로 구분)
+    - 빈 공간인 경우 벽의 위치 확인
+    - 이어진 벽이면 row cnt 증가
+        - row 종료 시 row cnt / 2 실시 후 total cnt 에 추가
      */
     static int M, N;
     static String[][] map;
     static boolean[][] visited;
     static boolean[][] isWall;
-    static int[] dx = {1,0,-1,0};
+    static int[] dx = {-1,0,1,0};
     static int[] dy = {0,1,0,-1};
 
     static class Pair {
@@ -59,58 +57,66 @@ public class JUN2115_갤러리 {
                 map[i][j] = temp[j];
             }
         }
-
+        int totalCnt = 0;
         for (int i = 0; i < M; i++) {
+            int rowCntUpper = 0;
+            int rowCntLower = 0;
+            int colCntRight = 0;
+            int colCntLeft = 0;
             for (int j = 0; j < N; j++) {
                 if(map[i][j].equals(".")){
-                    wallOrEmpty(new Pair(i, j));
+                    if(isWall(new Pair(i, j), 0)) rowCntUpper++;
+                    else {
+                        totalCnt += rowCntUpper/2;
+                        rowCntUpper = 0;
+                    }
+                    if(isWall(new Pair(i, j), 2)) rowCntLower++;
+                    else {
+                        totalCnt += rowCntLower/2;
+                        rowCntLower = 0;
+                    }
+                }
+
+                if(j == N-1 || map[i][j].equals("X")){
+                    totalCnt += rowCntUpper/2  + rowCntLower/2;
+                    rowCntUpper = 0;
+                    rowCntLower = 0;
                 }
             }
         }
 
-        for (int i = 0; i < M; i++) {
-            int cnt = 0;
-            for (int j = 0; j < N; j++) {
-//                if(isWall[i][j]){
-//                    howLong(new Pair(i,j));
-//                }
-                if(isWall[i][j]) cnt++;
-                else cnt = 0;
+        for (int i = 0; i < N; i++) {
+            int colCntRight = 0;
+            int colCntLeft = 0;
+            for (int j = 0; j < M; j++) {
+                if(map[j][i].equals(".")){
+                    if(isWall(new Pair(j, i), 1)) colCntRight++;
+                    else {
+                        totalCnt += colCntRight/2;
+                        colCntRight = 0;
+                    }
+                    if(isWall(new Pair(j, i), 3)) colCntLeft++;
+                    else {
+                        totalCnt += colCntLeft/2;
+                        colCntLeft = 0;
+                    }
+                }
+
+                if(j == M-1 || map[j][i].equals("X")){
+                    totalCnt += colCntRight/2  + colCntLeft/2;
+                    colCntRight = 0;
+                    colCntLeft = 0;
+                }
             }
         }
+
+        System.out.println(totalCnt);
     }
 
-    private static void howLong(Pair start) {
-        Deque<Pair> queue = new ArrayDeque<>();
-        queue.offer(start);
-
-
-    }
-
-    private static void wallOrEmpty(Pair start) {
-        Deque<Pair> queue = new ArrayDeque<>();
-        queue.offer(start);
-        visited[start.x][start.y] = true;
-
-        while(!queue.isEmpty()){
-            Pair current = queue.poll();
-            int cx = current.x;
-            int cy = current.y;
-
-            for (int i = 0; i < 4; i++) {
-                int nx = cx + dx[i];
-                int ny = cy + dy[i];
-                if(nx<0 || ny<0 || nx>=M || ny>=N) continue;
-                if(map[nx][ny].equals("X")){
-                    isWall[nx][ny] = true;
-                    continue;
-                }
-                if(map[nx][ny].equals(".")){
-                    queue.offer(new Pair(nx, ny));
-                }
-
-            }
-        }
+    private static boolean isWall(Pair pair, int dir) {
+        int nx = pair.x + dx[dir];
+        int ny = pair.y + dy[dir];
+        return map[nx][ny].equals("X");
     }
 
 }
