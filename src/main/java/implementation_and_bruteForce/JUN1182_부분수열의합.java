@@ -1,6 +1,7 @@
 package implementation_and_bruteForce;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class JUN1182_부분수열의합 {
@@ -30,7 +31,6 @@ public class JUN1182_부분수열의합 {
         N = Integer.parseInt(st.nextToken());
         S = Integer.parseInt(st.nextToken());
         inputArr = new int[N];
-
         st = new StringTokenizer(bf.readLine());
         for (int i = 0; i < N; i++) {
             inputArr[i] = Integer.parseInt(st.nextToken());

@@ -11,6 +11,7 @@ public class JUN9465 {
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
 
+    static int[] dx = new int[]{1, 0, -1, 0};
     /*
     ### 스티커
     - 1줄에 n개의 스티커가 있는 2줄의 티켓
