@@ -1,29 +1,19 @@
-import java.io.*;
-import java.util.*;
+import java.util.Arrays;
 
 public class Main {
-    static BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringTokenizer st;
 
-    static int n;
-    public static void main(String[] args) throws IOException {
-        n = Integer.parseInt(bf.readLine());
-        Deque<Integer> deque = new ArrayDeque<>();
+    public static void main(String[] args) {
+        int[] answer = {};
+        int[] first = {1,2,3,4,5};
+        int[] second = {2,1,2,3,2,4,2,5};
+        int[] third = {3,3,1,1,2,2,4,4,5,5};
 
-        while(n > 0){
-            deque.offerFirst(n%2);
-            n /= 2;
-        }
+        int fIdx, fCnt = 0;
+        int sIdx, sCnt = 0;
+        int tIdx, tCnt = 0;
+        fCnt = 3;
+        sCnt = 3;
 
-        String several = "";
-        int cnt0 = 0;
-        int cnt1 = 0;
-        while(!deque.isEmpty()){
-            String temp = String.valueOf(deque.pollFirst());
-            if(temp.equals("0")) cnt0++;
-            else cnt1++;
-            several += temp;
-        }
+        System.out.println(Math.max(fCnt, sCnt));
     }
 }
