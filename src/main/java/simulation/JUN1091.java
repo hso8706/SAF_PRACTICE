@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.StringTokenizer;
 
@@ -30,34 +31,50 @@ public class JUN1091 {
     }
 
     private static void serving() {
-        int cIdx = 0;
-        int pIdx = 0;
-        int can = 0;
         while(true){
-            if(cards[cIdx] == PD[P[pIdx]].peekFirst() && !used[cards[cIdx]]){//카드를 줄 수 있는 경우
-                used[cards[cIdx]] = true;
-                PD[P[pIdx]].pollFirst();
-                pIdx++;
-                if(pIdx>=3) pIdx %= 3;
-                cIdx++;
-                can = 0;
+            if(isSameOrder()){
+                break;
             }
             else {//카드를 줄 수 없는 경우
                 //카드 섞기, cnt 증가
                 int[] temp = new int[N];
                 for (int i = 0; i < N; i++) {
-                    temp[i] = S[cards[i]];
+                    temp[S[i]] = cards[i];
                 }
                 cards = cloneCards(temp);
                 cnt++;
-                can++;
             }
-            if(can >= N) {
+            if(cnt>0 && isSame()) {
                 cnt = -1;
                 break;
             }
-            if(pIdx == N) break;
         }
+    }
+
+    private static boolean isSame() {
+        int cnt = 0;
+        for (int i = 0; i < N; i++) {
+            if (cards[i]==i) cnt++;
+        }
+        return cnt==N;
+    }
+
+    private static boolean isSameOrder() {
+        int[] order = new int[N];
+        int idx = 0;
+        for(int i: cards){
+            order[i] = idx;
+            idx++;
+            if(idx>2) idx = 0;
+        }
+        boolean flag = true;
+        for (int i = 0; i < N; i++) {
+            if(order[i] != P[i]) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
     }
 
     private static int[] cloneCards(int[] temp) {
