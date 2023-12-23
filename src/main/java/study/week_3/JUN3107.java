@@ -32,29 +32,53 @@ public class JUN3107 {
     static ArrayList<String> groups;
     static boolean[] error;
     static int index;
-//    static ArrayList<Integer> index;
     public static void main(String[] args) throws IOException {
 
         init();
         findOrigin();
+        output();
+    }
+
+    private static void output() throws IOException {
+        for (int i = 0; i < groups.size(); i++) {
+            if(i== groups.size()-1) bw.write(groups.get(i));
+            else bw.write(groups.get(i)+":");
+        }
+        bw.flush();
+        bw.close();
     }
 
     private static void findOrigin() {
         String temp = "";
         int cnt = 0;
-        for (int i = 0; i < input.length(); i++) {
-            if(input.charAt(i) == ':' || i == input.length()-1){
-                groups.add(temp);
+        int splitCnt = 0;
+        for (int i = 0; i <= input.length(); i++) {
+            if(i == input.length() || input.charAt(i) == ':'){
+                splitCnt++;
                 if(temp.length() < 4) {
                     error[cnt] = true;
-                    if(temp.length() == 0) {
-                        index = i;
+                    int diff = temp.length();
+                    if(diff == 0) {
+                        index = cnt;
+                    }
+                    if(splitCnt==2) continue;
+                    for (int j = 0; j < 4 - diff; j++) {
+                        temp = "0"+temp;
                     }
                 }
+                groups.add(temp);
                 cnt++;
+                temp = "";
             }
             else {
+                splitCnt = 0;
                 temp += String.valueOf(input.charAt(i));
+            }
+        }
+        if(cnt!=8){
+            for (int i = 0; i < 8-cnt; i++) {
+                groups.add(index, "0000");
+                index++;
             }
         }
     }
@@ -64,6 +88,5 @@ public class JUN3107 {
         groups = new ArrayList<>();
         error = new boolean[9];
         index = -1;
-//        index = new ArrayList<>();
     }
 }
