@@ -60,6 +60,7 @@ public class JUN1753 {
             Node current = pq.poll();
             if(visited[current.end]) continue; // 방문 처리 된 곳 패스
             visited[current.end] = true; // 현재 지점만 방문 처리
+            //이는 뒤로 다시 돌아올 수 없는 다익스트라의 조건 때문에 성립 가능한 방문 조건
 
             for(Node next : adjList[current.end]){
                 if(shortest[next.end] > shortest[current.end] + next.weight){

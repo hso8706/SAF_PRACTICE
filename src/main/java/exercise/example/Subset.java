@@ -21,7 +21,7 @@ public class Subset {
     }
 
     private static void subset(int cnt) {
-        if(cnt == N){
+        if(cnt >= N){
             for (int i = 0; i < N; i++) {
                 System.out.print((isSelected[i] ? totals[i] : "x") + " ");
             }
